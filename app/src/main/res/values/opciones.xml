@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="combo_lugare">
+        <item> Seleccione lugar</item>
+        <item> Intercambiador Santa Cruz</item>
+        <item> Intercambiador La Laguna</item>
+        <item> Calle La Laguna Nº1</item>
+        <item> Calle Las peras Nº7</item>
+        <item> Autopista Norte</item>
+        <item> Dulceria el Rayo</item>
+    </string-array>
+</resources>

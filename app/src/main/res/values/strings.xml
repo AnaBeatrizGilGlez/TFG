@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BusGuideApplication</string>
+    <string name="fundir">Bluetooth no es compatible</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="iniciar">Iniciar</string>
+    <string name="sesion"> Iniciar sesión</string>
+    <string name="buscar">buscar</string>
+    <string name="correcto"> Okey</string>
+</resources>
