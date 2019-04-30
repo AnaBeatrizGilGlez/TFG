@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -42,32 +43,17 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
+
+        SignInButton google =(SignInButton) findViewById(R.id.google);
+
+        google.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                startActivityForResult(intent,777);
+            }
+        });
     }
-
-    @Override
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==777){
-            GoogleSignInResult result=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
-    }
-
-    protected void handleSignInResult(GoogleSignInResult result){
-        if(result.isSuccess()){
-            goMainScreen();
-        }else{
-            Toast.makeText(this, "No es posible entrar con ese correo", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void goMainScreen(){
-        Intent intent = new Intent(this,Inicio.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-
 
     public void registrar(View view){
         String email =mail.getText().toString();
@@ -122,8 +108,26 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
     }
 
-    public void Iniciar_Google(View view){
-        Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        startActivityForResult(intent,777);
+    @Override
+    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==777){
+            GoogleSignInResult result=Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    protected void handleSignInResult(GoogleSignInResult result){
+        if(result.isSuccess()){
+            goMainScreen();
+        }else{
+            Toast.makeText(this, "No es posible entrar con ese correo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void goMainScreen(){
+        Intent intent = new Intent(this,Inicio.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
