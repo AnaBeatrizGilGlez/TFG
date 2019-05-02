@@ -1,5 +1,6 @@
 package com.example.busguideapplication;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -12,17 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
+import android.widget.EditText;
 
 public class Connexion extends AppCompatActivity {
     Button buscar;
-    private static final Object Conexion = 1;
-    private static final Object TAG = Conexion;
-    ListView listview;
-    private ArrayList<String> mDeviceList = new ArrayList<>();
+    private static final String TAG = "Connexion";
+    EditText listview;
+    private String mDeviceList=null;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBluetoothdevice;
 
@@ -34,7 +31,7 @@ public class Connexion extends AppCompatActivity {
             Log.i(String.valueOf(getBaseContext()), "Bluetooth");
             if (mBluetoothdevice.ACTION_FOUND.equals(action)) {
                 device = intent.getParcelableExtra(mBluetoothdevice.EXTRA_DEVICE);
-                mDeviceList.add(device.getName()+"\n" + device.getAddress());
+                mDeviceList=device.getAddress();
                 Log.i(String.valueOf(getBaseContext()), "Blue" + device);
             }
         }
@@ -53,23 +50,19 @@ public class Connexion extends AppCompatActivity {
         setContentView(R.layout.connexion);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBluetoothAdapter!=null){
-            if(mBluetoothAdapter.isEnabled()){
-                Toast.makeText(Connexion.this, "Bluetooth ya activo", Toast.LENGTH_LONG).show();
-                Log.i(String.valueOf(getBaseContext()), "Bluetoothhh");
-            }else{
-                mBluetoothAdapter.enable();
-            }
-        }
 
         mBluetoothAdapter.startDiscovery();
-        getApplicationContext().getApplicationContext().registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));;
+
+        registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 
         buscar = findViewById(R.id.buscar);
-    }
 
-    public void InicioBusqueda(View view){
-        listview = findViewById(R.id.listview);
-        listview.setAdapter(new ArrayAdapter<>(getApplication(), android.R.layout.simple_list_item_1, mDeviceList));
+        buscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listview = findViewById(R.id.listview);
+                listview.setText(mDeviceList);
+            }
+        });
     }
 }

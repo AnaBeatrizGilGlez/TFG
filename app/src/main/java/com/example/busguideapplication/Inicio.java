@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -28,8 +29,10 @@ public class Inicio extends AppCompatActivity {
         BluetoothDevice device;
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i(TAG,"Bluetoothx2");
             String action=intent.getAction();
             if (mBluetoothdevice.ACTION_FOUND.equals(action)) {
+                Log.i(TAG,"Bluetooth");
                 device = intent.getParcelableExtra(mBluetoothdevice.EXTRA_DEVICE);
                 mDeviceList=device.getAddress();
                 if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
@@ -59,7 +62,6 @@ public class Inicio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inicio);
 
-
         combolugares= findViewById(R.id.spinnerlugares);
         salida_personas=findViewById(R.id.salida_persona);
         imagen = findViewById(R.id.imagen);
@@ -67,9 +69,8 @@ public class Inicio extends AppCompatActivity {
         start=findViewById(R.id.Start);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
         mBluetoothAdapter.startDiscovery();
-        registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        getBaseContext().registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
 
         adapter = ArrayAdapter.createFromResource(Inicio.this, R.array.combo_lugare,
                 android.R.layout.simple_spinner_item);
