@@ -75,7 +75,7 @@ public class Configuracion extends AppCompatActivity {
 
         if(!Contraseña.getText().toString().isEmpty()){
             String contraseña_nueva=Contraseña.getText().toString().trim();
-            if(contraseña_nueva.length()< 6){
+            if(contraseña_nueva.length()<6){
                 Toast.makeText(this, "La contraseña tiene que tener un tamaño superior o igual a 6. No se ha cambiado la contraseña", Toast.LENGTH_SHORT).show();
             }else {
                 user.updatePassword(contraseña_nueva);
