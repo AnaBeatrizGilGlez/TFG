@@ -60,7 +60,9 @@ public class Configuracion extends AppCompatActivity {
     }
 
     public void Salir(View view){
-        startActivity(new Intent(Configuracion.this,Inicio.class));
+        Intent intent=new Intent(Configuracion.this,Inicio.class);
+        intent.putExtra("Google","1");
+        startActivity(intent);
     }
 
     public void Cambiar_Datos(View view){
@@ -79,15 +81,21 @@ public class Configuracion extends AppCompatActivity {
                 Toast.makeText(this, "La contraseña tiene que tener un tamaño superior o igual a 6. No se ha cambiado la contraseña", Toast.LENGTH_SHORT).show();
             }else {
                 user.updatePassword(contraseña_nueva);
-                startActivity(new Intent(Configuracion.this,Inicio.class));
+                Intent intent=new Intent(Configuracion.this,Inicio.class);
+                intent.putExtra("Google","1");
+                startActivity(intent);
                 finish();
             }
         }else{
-            startActivity(new Intent(Configuracion.this,Inicio.class));
+            Intent intent=new Intent(Configuracion.this,Inicio.class);
+            intent.putExtra("Google","1");
+            startActivity(intent);
         }
 
         if(aux.equals("1")){
-            startActivity(new Intent(Configuracion.this,Inicio.class));
+            Intent intent=new Intent(Configuracion.this,Inicio.class);
+            intent.putExtra("Google","1");
+            startActivity(intent);
         }
     }
 

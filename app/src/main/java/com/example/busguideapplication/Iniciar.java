@@ -39,7 +39,7 @@ public class Iniciar extends AppCompatActivity {
         String pass=Contraseña.getText().toString().trim();
 
         if ((TextUtils.isEmpty(email)) || (TextUtils.isEmpty(pass))){
-            Toast.makeText(Iniciar.this, "No debe existir ningún campo vacío.", Toast.LENGTH_LONG).show();
+            Toast.makeText(Iniciar.this, "No debe existir ningún campo vacío. ", Toast.LENGTH_LONG).show();
         }else{
             iniciarusuario(email,pass);
         }

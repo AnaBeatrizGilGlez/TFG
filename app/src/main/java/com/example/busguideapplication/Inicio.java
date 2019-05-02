@@ -6,16 +6,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 
 public class Inicio extends AppCompatActivity {
     private static final String TAG = "Inicio" ;
     Spinner combolugares,salida_personas;
     Button buscar;
+    TextView nombre_perfil;
     ImageView imagen;
     String aux,aux_salida;
     BluetoothAdapter mBluetoothAdapter;
@@ -25,6 +32,7 @@ public class Inicio extends AppCompatActivity {
     Bundle datos;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
+    private GoogleApiClient googleApiClient;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         BluetoothDevice device;
@@ -68,13 +76,31 @@ public class Inicio extends AppCompatActivity {
         imagen = findViewById(R.id.imagen);
         buscar=findViewById(R.id.buscar);
         start=findViewById(R.id.Start);
+        nombre_perfil=findViewById(R.id.nombre_perfil);
         datos = getIntent().getExtras();
         String datos_obt= datos.getString("Google");
 
-        if(datos_obt.equals("0")){
-            imagen.setVisibility(View.GONE);
-        }else{
-            imagen.setVisibility(View.VISIBLE);
+        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
+        FirebaseUser user=firebaseAuth.getCurrentUser();
+        if(user!=null) {
+            if (datos_obt.equals("1")) {
+                for (UserInfo profile : user.getProviderData()) {
+                    String name = profile.getDisplayName();
+                    Uri photoUrl = profile.getPhotoUrl();
+                    imagen.setVisibility(View.VISIBLE);
+                    if(!name.isEmpty() || name.equals(null)) {
+                        nombre_perfil.setText("Bienvenido/a " + name);
+                    }else{
+                        nombre_perfil.setText("Bienvenido/a " + user.getEmail());
+                    }
+                }
+            } else {
+                imagen.setVisibility(View.GONE);
+                /*GoogleSignInOptions options= new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                googleApiClient = new GoogleApiClient.Builder(this)
+                        .enableAutoManage(this, (GoogleApiClient.OnConnectionFailedListener) this).addApi(Auth.GOOGLE_SIGN_IN_API,options).build();
+                */
+            }
         }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -110,6 +136,41 @@ public class Inicio extends AppCompatActivity {
     public void Configurar(View view){
         startActivity(new Intent(Inicio.this,Configuracion.class));
     }
+
+    /*@Override
+    protected void onStart(){
+        super.onStart();
+
+        OptionalPendingResult<GoogleSignInResult> opr=Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if(opr.isDone()){
+            GoogleSignInResult result=opr.get();
+            handleSignInResult(result);
+        }else{
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result){
+        if(result.isSuccess()){
+            GoogleSignInAccount account=result.getSignInAccount();
+
+            nombre_perfil.setText("Bienvenido" + account.getDisplayName());
+            Glide.with(this).load(account.getPhotoUrl()).into(camara_perfil);
+        }else{
+            goLogInScreen();
+        }
+    }
+
+    private void goLogInScreen(){
+        Intent intent= new Intent(this, Registro.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }*/
 
     public void Buscar_ruta(View view){
         if(aux.equals("Seleccione lugar")){
