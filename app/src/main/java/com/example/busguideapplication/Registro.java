@@ -99,7 +99,9 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         if(aux==1) {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass);
             Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(Registro.this,Inicio.class));
+            Intent intent =new Intent(Registro.this,Inicio.class);
+            intent.putExtra("Google","1");
+            startActivity(intent);
         }
     }
 
@@ -127,6 +129,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
     private void goMainScreen(){
         Intent intent = new Intent(this,Inicio.class);
+        intent.putExtra("Google","0");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

@@ -22,6 +22,7 @@ public class Inicio extends AppCompatActivity {
     BluetoothDevice mBluetoothdevice;
     private String mDeviceList=null;
     String inicializar="null";
+    Bundle datos;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
 
@@ -67,6 +68,14 @@ public class Inicio extends AppCompatActivity {
         imagen = findViewById(R.id.imagen);
         buscar=findViewById(R.id.buscar);
         start=findViewById(R.id.Start);
+        datos = getIntent().getExtras();
+        String datos_obt= datos.getString("Google");
+
+        if(datos_obt.equals("0")){
+            imagen.setVisibility(View.GONE);
+        }else{
+            imagen.setVisibility(View.VISIBLE);
+        }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothAdapter.startDiscovery();

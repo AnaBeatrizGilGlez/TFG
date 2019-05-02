@@ -40,7 +40,6 @@ public class Iniciar extends AppCompatActivity {
 
         if ((TextUtils.isEmpty(email)) || (TextUtils.isEmpty(pass))){
             Toast.makeText(Iniciar.this, "No debe existir ningún campo vacío", Toast.LENGTH_LONG).show();
-            return;
         }else{
             iniciarusuario(email,pass);
         }
@@ -53,7 +52,9 @@ public class Iniciar extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(Iniciar.this, "Usuario entrando", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(Iniciar.this,Inicio.class));
+                    Intent intent = new Intent(Iniciar.this,Inicio.class);
+                    intent.putExtra("Google","1");
+                    startActivity(intent);
                 }else{
                     Toast.makeText(Iniciar.this, "Usuario o contraseña incorrecto", Toast.LENGTH_LONG).show();
                 }
