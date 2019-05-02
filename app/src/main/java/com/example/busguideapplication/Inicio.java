@@ -7,13 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -67,6 +75,7 @@ public class Inicio extends AppCompatActivity {
     };
 
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inicio);
@@ -82,11 +91,11 @@ public class Inicio extends AppCompatActivity {
 
         FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
         FirebaseUser user=firebaseAuth.getCurrentUser();
+        Log.i(TAG, "Usuario " + user.getEmail());
         if(user!=null) {
             if (datos_obt.equals("1")) {
                 for (UserInfo profile : user.getProviderData()) {
                     String name = profile.getDisplayName();
-                    Uri photoUrl = profile.getPhotoUrl();
                     imagen.setVisibility(View.VISIBLE);
                     if(!name.isEmpty() || name.equals(null)) {
                         nombre_perfil.setText("Bienvenido/a " + name);
@@ -96,10 +105,7 @@ public class Inicio extends AppCompatActivity {
                 }
             } else {
                 imagen.setVisibility(View.GONE);
-                /*GoogleSignInOptions options= new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-                googleApiClient = new GoogleApiClient.Builder(this)
-                        .enableAutoManage(this, (GoogleApiClient.OnConnectionFailedListener) this).addApi(Auth.GOOGLE_SIGN_IN_API,options).build();
-                */
+                nombre_perfil.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             }
         }
 
@@ -136,41 +142,6 @@ public class Inicio extends AppCompatActivity {
     public void Configurar(View view){
         startActivity(new Intent(Inicio.this,Configuracion.class));
     }
-
-    /*@Override
-    protected void onStart(){
-        super.onStart();
-
-        OptionalPendingResult<GoogleSignInResult> opr=Auth.GoogleSignInApi.silentSignIn(googleApiClient);
-        if(opr.isDone()){
-            GoogleSignInResult result=opr.get();
-            handleSignInResult(result);
-        }else{
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
-                }
-            });
-        }
-    }
-
-    private void handleSignInResult(GoogleSignInResult result){
-        if(result.isSuccess()){
-            GoogleSignInAccount account=result.getSignInAccount();
-
-            nombre_perfil.setText("Bienvenido" + account.getDisplayName());
-            Glide.with(this).load(account.getPhotoUrl()).into(camara_perfil);
-        }else{
-            goLogInScreen();
-        }
-    }
-
-    private void goLogInScreen(){
-        Intent intent= new Intent(this, Registro.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }*/
 
     public void Buscar_ruta(View view){
         if(aux.equals("Seleccione lugar")){
