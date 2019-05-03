@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -54,6 +55,7 @@ public class Iniciar extends AppCompatActivity {
                     Toast.makeText(Iniciar.this, "Usuario entrando", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(Iniciar.this,Inicio.class);
                     intent.putExtra("Google","1");
+                    Log.i(String.valueOf(getApplicationContext()),"Usuariooooo");
                     startActivity(intent);
                 }else{
                     Toast.makeText(Iniciar.this, "Usuario o contraseña incorrecto", Toast.LENGTH_LONG).show();

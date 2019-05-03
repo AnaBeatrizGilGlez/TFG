@@ -6,33 +6,23 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 
 public class Inicio extends AppCompatActivity {
     private static final String TAG = "Inicio" ;
     Spinner combolugares,salida_personas;
     Button buscar;
     TextView nombre_perfil;
-    ImageView imagen;
+    ImageView imagen,foto_perfil;
     String aux,aux_salida;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mBluetoothdevice;
@@ -42,7 +32,6 @@ public class Inicio extends AppCompatActivity {
     String datos_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
-    private GoogleApiClient googleApiClient;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         BluetoothDevice device;
@@ -76,7 +65,6 @@ public class Inicio extends AppCompatActivity {
         }
     };
 
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -89,21 +77,25 @@ public class Inicio extends AppCompatActivity {
         start=findViewById(R.id.Start);
         nombre_perfil=findViewById(R.id.nombre_perfil);
         datos = getIntent().getExtras();
+        foto_perfil=findViewById(R.id.foto_perfil);
         datos_obt= datos.getString("Google");
 
-        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
-        FirebaseUser user=firebaseAuth.getCurrentUser();
-        Log.i(TAG, "Usuario " + user.getEmail());
+        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+        Log.i(TAG, "Usuario " + user.getDisplayName());
         if(user!=null) {
             if (datos_obt.equals("1")) {
-                for (UserInfo profile : user.getProviderData()) {
-                    String name = profile.getDisplayName();
-                    imagen.setVisibility(View.VISIBLE);
-                    if(!name.isEmpty() || name.equals(null)) {
-                        nombre_perfil.setText("Bienvenido/a " + name);
-                    }else{
-                        nombre_perfil.setText("Bienvenido/a " + user.getEmail());
-                    }
+                if(!(user.getDisplayName() ==null)) {
+                    String name = user.getDisplayName();
+                    nombre_perfil.setText("Bienvenido/a " + name);
+                }else{
+                    nombre_perfil.setText("Bienvenido/a " + user.getEmail());
+                }
+                imagen.setVisibility(View.VISIBLE);
+                if(!(user.getPhotoUrl() ==null)){
+                    foto_perfil.setImageURI(user.getPhotoUrl());
+                    foto_perfil.setVisibility(View.VISIBLE);
+                }else{
+                    foto_perfil.setVisibility(View.GONE);
                 }
             } else {
                 imagen.setVisibility(View.GONE);
