@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -38,6 +39,7 @@ public class Inicio extends AppCompatActivity {
     private String mDeviceList=null;
     String inicializar="null";
     Bundle datos;
+    String datos_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
     private GoogleApiClient googleApiClient;
@@ -87,7 +89,7 @@ public class Inicio extends AppCompatActivity {
         start=findViewById(R.id.Start);
         nombre_perfil=findViewById(R.id.nombre_perfil);
         datos = getIntent().getExtras();
-        String datos_obt= datos.getString("Google");
+        datos_obt= datos.getString("Google");
 
         FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
         FirebaseUser user=firebaseAuth.getCurrentUser();
@@ -139,6 +141,12 @@ public class Inicio extends AppCompatActivity {
         });
     }
 
+    public void Salir(View view){
+        Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(Inicio.this, MainActivity.class));
+        finish();
+    }
+
     public void Configurar(View view){
         startActivity(new Intent(Inicio.this,Configuracion.class));
     }
@@ -162,7 +170,6 @@ public class Inicio extends AppCompatActivity {
                         cambiar.putExtra("Salida", aux_salida);
                         cambiar.putExtra("Datos", aux);
                         startActivity(cambiar);
-                        //finish();
                     }
                 }
             }else {

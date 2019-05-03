@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
@@ -44,7 +45,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
 
-        SignInButton google =(SignInButton) findViewById(R.id.google);
+        Button google = findViewById(R.id.google);
 
         google.setOnClickListener(new View.OnClickListener() {
             @Override
