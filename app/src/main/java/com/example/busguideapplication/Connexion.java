@@ -47,7 +47,6 @@ public class Connexion extends AppCompatActivity {
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             super.onBatchScanResults(results);
-            Log.i(String.valueOf(getApplicationContext()),"Helloo");
         }
 
         @Override
