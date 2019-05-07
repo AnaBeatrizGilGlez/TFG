@@ -57,7 +57,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
     }
 
     public void registrar(View view){
-        String email =mail.getText().toString();
+        String email =mail.getText().toString().trim();
         String pass=Contraseña.getText().toString();
         String repeaters=Repetir.getText().toString();
 

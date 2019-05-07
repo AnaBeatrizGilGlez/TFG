@@ -36,8 +36,8 @@ public class Iniciar extends AppCompatActivity {
     }
 
     public void iniciar(View view){
-        String email =mail.getText().toString();
-        String pass=Contraseña.getText().toString().trim();
+        String email =mail.getText().toString().trim();
+        String pass=Contraseña.getText().toString();
 
         if ((TextUtils.isEmpty(email)) || (TextUtils.isEmpty(pass))){
             Toast.makeText(Iniciar.this, "No debe existir ningún campo vacío. ", Toast.LENGTH_LONG).show();

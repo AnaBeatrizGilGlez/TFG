@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
+    } 
     public void Registrar (View view){
         startActivity(new Intent(MainActivity.this,Registro.class));
     }
