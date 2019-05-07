@@ -2,7 +2,10 @@ package com.example.busguideapplication;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT =0 ;
     Button regist, inici;
     ImageView Guagua;
+    LocationManager lm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BluetoothAdapter mBluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         regist=(Button) findViewById(R.id.regist);
         inici=(Button) findViewById(R.id.inici);
@@ -41,7 +46,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    } 
+
+        if((!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) && (!lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))){
+            AlertNoGps();
+        }
+    }
+
+    private void AlertNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("El sistema GPS esta desactivado, ¿Desea activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        finish();
+                    }
+                });
+        Dialog dialog=builder.create();
+        dialog.show();
+    }
+
     public void Registrar (View view){
         startActivity(new Intent(MainActivity.this,Registro.class));
     }

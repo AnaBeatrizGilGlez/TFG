@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -31,6 +32,7 @@ public class Connexion extends AppCompatActivity {
     Button stopScanningButton;
     TextView peripheralTextView;
     private final static int REQUEST_ENABLE_BT = 1;
+    AlertDialog alert = null;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     private ScanCallback leScanCallback = new ScanCallback() {
@@ -82,11 +84,6 @@ public class Connexion extends AppCompatActivity {
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
-
-        if (btAdapter != null && !btAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
-        }
 
         // Make sure we have access coarse location enabled, if not, prompt the user to enable it
         if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -155,5 +152,23 @@ public class Connexion extends AppCompatActivity {
                 btScanner.stopScan(leScanCallback);
             }
         });
+    }
+
+    private void AlertNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("El sistema GPS esta desactivado, ¿Desea activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        alert = builder.create();
+        alert.show();
     }
 }
