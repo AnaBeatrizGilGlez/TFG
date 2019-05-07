@@ -37,7 +37,7 @@ public class Connexion extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
 
-            Log.i(String.valueOf(getApplicationContext()),"Hello");
+            Log.i(String.valueOf(getApplicationContext()),"Hellouu");
             peripheralTextView.append("Device Name: " + result.getDevice().getName() + " address: " + result.getDevice().getAddress() + "\n");
             final int scrollAmount = peripheralTextView.getLayout().getLineTop(peripheralTextView.getLineCount()) - peripheralTextView.getHeight();
             if (scrollAmount > 0)
