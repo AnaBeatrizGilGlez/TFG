@@ -10,11 +10,12 @@ import android.widget.TextView;
 
 public class Beacon extends AppCompatActivity {
     private static final String TAG = "Beacon" ;
-    Bundle datos,salida,destino,valor;
+    Bundle datos,salida,destino,valor,check;
     TextView dates;
     Button parar, cambiar;
-    String lugar;
-    String salida_obt, destino_obt,valor_obt,datos_obt;
+    String lugar,numero_string;
+    Integer numero;
+    String salida_obt, destino_obt,valor_obt,datos_obt,check_obt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,9 @@ public class Beacon extends AppCompatActivity {
         datos_obt= datos.getString("Datos");
         valor = getIntent().getExtras();
         valor_obt = valor.getString("Google");
+        check=getIntent().getExtras();
+        check_obt=check.getString("Check");
+
         dates = findViewById(R.id.datos);
         if(datos_obt.equals("FC:23:60:ED:0B:B7")) {
             lugar="Calle La Laguna Nº1";
@@ -67,9 +71,13 @@ public class Beacon extends AppCompatActivity {
             startActivity(llegar);
         }else {
             Intent vuelta = new Intent(Beacon.this, Ruta.class);
+            numero=Integer.parseInt(check_obt);
+            numero=numero+1;
+            numero_string=String.valueOf(numero);
             vuelta.putExtra("Salida", salida_obt);
             vuelta.putExtra("Datos", destino_obt);
             vuelta.putExtra("Google",valor_obt);
+            vuelta.putExtra("Check",numero_string);
             startActivity(vuelta);
         }
     }

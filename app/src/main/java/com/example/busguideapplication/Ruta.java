@@ -28,9 +28,8 @@ public class Ruta extends AppCompatActivity {
     BluetoothManager btManager;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
-    Bundle datos, salida, valor;
-    Integer valor_check;
-    String datos_obt, salida_obt,valor_obt;
+    Bundle datos, salida, valor, check;
+    String datos_obt, salida_obt,valor_obt, check_obt;
     String Dulceria="Dulceria el Rayo";
     String LL="Intercambiador La Laguna";
     String Norte = "Autopista Norte";
@@ -49,6 +48,7 @@ public class Ruta extends AppCompatActivity {
                 cambiar.putExtra("Destino",datos_obt);
                 cambiar.putExtra("Salida",salida_obt);
                 cambiar.putExtra("Google",valor_obt);
+                cambiar.putExtra("Check",check_obt);
                 startActivity(cambiar);  ///PROBAR A PONERLO DESPUES DE LOS 4 IF
             }
             if(mDeviceList.equals("E2:C3:B1:E0:2D:8B")){
@@ -58,6 +58,7 @@ public class Ruta extends AppCompatActivity {
                 cambiar.putExtra("Destino",datos_obt);
                 cambiar.putExtra("Salida",salida_obt);
                 cambiar.putExtra("Google",valor_obt);
+                cambiar.putExtra("Check",check_obt);
                 startActivity(cambiar);
             }
             if(mDeviceList.equals("E1:FF:56:62:7F:F3")){
@@ -67,6 +68,7 @@ public class Ruta extends AppCompatActivity {
                 cambiar.putExtra("Google",valor_obt);
                 cambiar.putExtra("Destino",datos_obt);
                 cambiar.putExtra("Salida",salida_obt);
+                cambiar.putExtra("Check",check_obt);
                 startActivity(cambiar);
             }
             if(mDeviceList.equals("E3:10:F4:C0:4F:0E")){
@@ -76,6 +78,7 @@ public class Ruta extends AppCompatActivity {
                 cambiar.putExtra("Destino",datos_obt);
                 cambiar.putExtra("Google",valor_obt);
                 cambiar.putExtra("Salida",salida_obt);
+                cambiar.putExtra("Check",check_obt);
                 startActivity(cambiar);
             }
         }
@@ -103,9 +106,11 @@ public class Ruta extends AppCompatActivity {
         datos = getIntent().getExtras();
         salida=getIntent().getExtras();
         valor = getIntent().getExtras();
+        check=getIntent().getExtras();
         datos_obt= datos.getString("Datos");
         salida_obt=salida.getString("Salida");
         valor_obt = valor.getString("Google");
+        check_obt = check.getString("Check");
 
         buscar= findViewById(R.id.buscar);
         startScanning();
@@ -122,52 +127,62 @@ public class Ruta extends AppCompatActivity {
         dos=findViewById(R.id.Dos);
         cuatro=findViewById(R.id.Cuatro);
 
-        /*uno.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tres.setChecked(true);
-            }
-        });*/
-
         lugar.setText(salida_obt + "-" + datos_obt);
         if((salida_obt.equals(Peras) || salida_obt.equals(LL) || salida_obt.equals(Calle_LL))
                 && datos_obt.equals(Dulceria)){
             uno.setText("No se baje en Calle La Laguna Nº1, continue hasta la siguiente parada");
             dos.setText("No se baje en Calle Las Peras, continue hasta la siguiente parada");
             tres.setText("Bajese en la parada Destino: " + datos_obt);
-            valor_check=3;
 
             cuatro.setVisibility(View.GONE);
             numeroparadas.setText("3");
             tiempo.setText("30 minutos");
+
+            if(check_obt.equals("1")){
+                uno.setChecked(true);
+            }else{
+                if(check_obt.equals("2")){
+                    uno.setChecked(true);
+                    dos.setChecked(true);
+                }
+            }
             if(salida_obt.equals(Calle_LL)){
                 numeroparadas.setText("2");
                 tiempo.setText("20 minutos");
                 uno.setVisibility(View.GONE);
-                valor_check=2;
+                if(check_obt.equals("1")){
+                    dos.setChecked(true);
+                }
             }else{
                 numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
                 uno.setVisibility(View.GONE);
                 dos.setVisibility(View.GONE);
-                valor_check=1;
             }
         }else{
             if(((salida_obt.equals(SC) || (salida_obt.equals(Norte))) && datos_obt.equals(Dulceria))){
                 uno.setText("No se baje en Autopista Norte, continue hasta la siguiente parada");
                 dos.setText("Baje en Calle Las Peras, y coja la guagua número 8");
                 tres.setText("Bajese en la parada Destino: " + datos_obt);
-                valor_check=3;
 
                 cuatro.setVisibility(View.GONE);
                 numeroparadas.setText("3");
                 tiempo.setText("50 minutos");
+                if(check_obt.equals("1")){
+                    uno.setChecked(true);
+                }else{
+                    if(check_obt.equals("2")){
+                        uno.setChecked(true);
+                        dos.setChecked(true);
+                    }
+                }
                 if(salida_obt.equals(Norte)){
                     numeroparadas.setText("2");
                     tiempo.setText("20 minutos");
                     uno.setVisibility(View.GONE);
-                    dos.setVisibility(View.GONE);
-                    valor_check=2;
+                    if(check_obt.equals("1")){
+                        dos.setChecked(true);
+                    }
                 }
             }
         }
@@ -177,23 +192,29 @@ public class Ruta extends AppCompatActivity {
             if(salida_obt.equals(LL) || salida_obt.equals(Dulceria)){
                 uno.setVisibility(View.GONE);
                 dos.setVisibility(View.GONE);
-                valor_check=1;
-
-                numeroparadas.setText(valor_check);
+                numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
             }else{
                 if(salida_obt.equals(SC) || salida_obt.equals(Norte)){
                     uno.setText("No se baje en Autopista Norte.");
                     dos.setText("Bajese en calle Las Peras Nº7 y coja la guagua 305");
-                    valor_check=3;
-
-                    numeroparadas.setText(valor_check);
+                    numeroparadas.setText("3");
                     tiempo.setText("50 minutos");
+                    if(check_obt.equals("1")){
+                        uno.setChecked(true);
+                    }else{
+                        if(check_obt.equals("2")){
+                            uno.setChecked(true);
+                            dos.setChecked(true);
+                        }
+                    }
                     if(salida_obt.equals(Norte)){
                         uno.setVisibility(View.GONE);
-                        valor_check=2;
-                        numeroparadas.setText(valor_check);
+                        numeroparadas.setText("2");
                         tiempo.setText("20 minutos");
+                        if(check_obt.equals("2")){
+                            dos.setChecked(true);
+                        }
                     }
                 }
             }
@@ -204,14 +225,15 @@ public class Ruta extends AppCompatActivity {
             cuatro.setVisibility(View.GONE);
             if(salida_obt.equals(Dulceria) || salida_obt.equals(Calle_LL) || salida_obt.equals(Norte)){
                 uno.setVisibility(View.GONE);
-                valor_check=1;
                 tiempo.setText("10 minutos");
-                numeroparadas.setText(valor_check);
+                numeroparadas.setText("1");
             }else{
                 uno.setText("No se baje en Autopista Norte.");
-                valor_check=2;
                 tiempo.setText("40 minutos");
-                numeroparadas.setText(valor_check);
+                numeroparadas.setText("2");
+                if(check_obt.equals("1")){
+                    uno.setChecked(true);
+                }
                 if(salida_obt.equals(LL)){
                     tiempo.setText("20 minutos");
                     uno.setText("No se baje en " + Calle_LL);
@@ -224,25 +246,33 @@ public class Ruta extends AppCompatActivity {
                 uno.setVisibility(View.GONE);
                 dos.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
-                valor_check=1;
                 tiempo.setText("10 minutos");
-                numeroparadas.setText(valor_check);
+                numeroparadas.setText("1");
             }else{
                 if(salida_obt.equals(Peras)){
                     uno.setText("No se baje en " + Calle_LL);
-                    valor_check=2;
                     dos.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
                     tiempo.setText("20 minutos");
-                    numeroparadas.setText(valor_check);
+                    numeroparadas.setText("2");
+                    if(check_obt.equals("1")){
+                        uno.setChecked(true);
+                    }
                 }else{
                     if(salida_obt.equals(Norte) || (salida_obt.equals(Dulceria))){
                         uno.setText("No se baje en " + Peras);
                         dos.setText("No se baje en " + Calle_LL);
-                        valor_check=3;
                         tres.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
-                        numeroparadas.setText(valor_check);
+                        numeroparadas.setText("3");
+                        if(check_obt.equals("1")){
+                            uno.setChecked(true);
+                        }else{
+                            if(check_obt.equals("2")){
+                                uno.setChecked(true);
+                                dos.setChecked(true);
+                            }
+                        }
                         if(salida_obt.equals(Norte)){
                             uno.setText("Bajese en " + Peras + "y coja la guagua numero 308");
                         }
@@ -251,9 +281,22 @@ public class Ruta extends AppCompatActivity {
                             uno.setText("No se baje en " + Norte);
                             dos.setText("Bajese en " + Peras + " y coja la guagua numero 308");
                             tres.setText("No se baje en " + Calle_LL);
-                            valor_check=4;
                             tiempo.setText("1 hora");
-                            numeroparadas.setText(valor_check);
+                            numeroparadas.setText("4");
+                            if(check_obt.equals("1")){
+                                uno.setChecked(true);
+                            }else{
+                                if(check_obt.equals("2")){
+                                    uno.setChecked(true);
+                                    dos.setChecked(true);
+                                }else{
+                                    if(check_obt.equals("3")){
+                                        uno.setChecked(true);
+                                        dos.setChecked(true);
+                                        tres.setChecked(true);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -265,7 +308,6 @@ public class Ruta extends AppCompatActivity {
                 uno.setVisibility(View.GONE);
                 dos.setVisibility(View.GONE);
                 cuatro.setVisibility(View.GONE);
-                valor_check=1;
                 tiempo.setText("30 minutos");
                 numeroparadas.setText("1");
                 if(salida_obt.equals(Peras)){
@@ -277,16 +319,25 @@ public class Ruta extends AppCompatActivity {
                     dos.setVisibility(View.GONE);
                     cuatro.setVisibility(View.GONE);
                     tiempo.setText("20 minutos");
-                    valor_check=2;
                     numeroparadas.setText("2");
+                    if(check_obt.equals("1")){
+                        uno.setChecked(true);
+                    }
                 }else{
                     if(salida_obt.equals(LL)){
                         uno.setText("No se baje en la parada "+ Calle_LL);
                         dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
-                        valor_check=3;
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
                         numeroparadas.setText("3");
+                        if(check_obt.equals("1")){
+                            uno.setChecked(true);
+                        }else{
+                            if(check_obt.equals("2")){
+                                uno.setChecked(true);
+                                dos.setChecked(true);
+                            }
+                        }
                     }
                 }
             }
@@ -297,7 +348,6 @@ public class Ruta extends AppCompatActivity {
                 uno.setVisibility(View.GONE);
                 dos.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
-                valor_check=1;
                 tiempo.setText("30 minutos");
                 numeroparadas.setText("1");
             }else{
@@ -305,24 +355,46 @@ public class Ruta extends AppCompatActivity {
                     uno.setText("No se baje en la parada" + Norte);
                     dos.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
-                    valor_check=2;
                     tiempo.setText("40 minutos");
                     numeroparadas.setText("2");
+                    if(check_obt.equals("1")){
+                        uno.setChecked(true);
+                    }
                 }else{
                     if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
                         uno.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
                         dos.setText("No se baje en la parada " + Norte);
-                        valor_check=3;
                         tres.setVisibility(View.GONE);
                         tiempo.setText("50 minutos");
                         numeroparadas.setText("3");
+                        if(check_obt.equals("1")){
+                            uno.setChecked(true);
+                        }else{
+                            if(check_obt.equals("2")){
+                                uno.setChecked(true);
+                                dos.setChecked(true);
+                            }
+                        }
                     }else{
                         uno.setText("No se baje en la parada" + Calle_LL);
                         dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
                         tres.setText("No se baje en la parada " + Norte);
-                        valor_check=4;
                         tiempo.setText("1 hora");
                         numeroparadas.setText("4");
+                        if(check_obt.equals("1")){
+                            uno.setChecked(true);
+                        }else{
+                            if(check_obt.equals("2")){
+                                uno.setChecked(true);
+                                dos.setChecked(true);
+                            }else{
+                                if(check_obt.equals("3")){
+                                    uno.setChecked(true);
+                                    dos.setChecked(true);
+                                    tres.setChecked(true);
+                                }
+                            }
+                        }
                     }
                 }
             }

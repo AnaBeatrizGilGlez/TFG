@@ -196,6 +196,7 @@ public class Inicio extends AppCompatActivity {
                         cambiar.putExtra("Salida", aux_salida);
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google",datos_obt);
+                        cambiar.putExtra("Check","0");
                         startActivity(cambiar);
                     }
                 }
@@ -212,6 +213,7 @@ public class Inicio extends AppCompatActivity {
                     cambiar.putExtra("Salida", inicializar);
                     cambiar.putExtra("Datos", aux);
                     cambiar.putExtra("Google",datos_obt);
+                    cambiar.putExtra("Check",0);
                     startActivity(cambiar);
                 }
             }
