@@ -3,17 +3,18 @@ package com.example.busguideapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class Beacon extends AppCompatActivity {
     private static final String TAG = "Beacon" ;
-    Bundle datos,salida,destino;
+    Bundle datos,salida,destino,valor;
     TextView dates;
     Button parar, cambiar;
     String lugar;
-    String salida_obt, destino_obt;
+    String salida_obt, destino_obt,valor_obt,datos_obt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,9 @@ public class Beacon extends AppCompatActivity {
         destino = getIntent().getExtras();
         destino_obt= destino.getString("Destino");
         datos = getIntent().getExtras();
-        String datos_obt= datos.getString("Datos");
+        datos_obt= datos.getString("Datos");
+        valor = getIntent().getExtras();
+        valor_obt = valor.getString("Google");
         dates = findViewById(R.id.datos);
         if(datos_obt.equals("FC:23:60:ED:0B:B7")) {
             lugar="Calle La Laguna Nº1";
@@ -60,16 +63,20 @@ public class Beacon extends AppCompatActivity {
         if(lugar.equals(destino_obt)){
             Intent llegar=new Intent(Beacon.this, Fin.class);
             llegar.putExtra("Cumplida",lugar);
+            llegar.putExtra("Google",valor_obt);
             startActivity(llegar);
         }else {
             Intent vuelta = new Intent(Beacon.this, Ruta.class);
             vuelta.putExtra("Salida", salida_obt);
             vuelta.putExtra("Datos", destino_obt);
+            vuelta.putExtra("Google",valor_obt);
             startActivity(vuelta);
         }
     }
 
     public void Cambiar_Ruta(View view){
-        startActivity(new Intent(Beacon.this,Inicio.class));
+        Intent cambiar = new Intent(Beacon.this,Inicio.class);
+        cambiar.putExtra("Google",valor_obt);
+        startActivity(cambiar);
     }
 }

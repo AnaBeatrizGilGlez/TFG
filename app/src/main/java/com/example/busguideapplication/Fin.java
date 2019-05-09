@@ -3,6 +3,7 @@ package com.example.busguideapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,8 @@ public class Fin extends AppCompatActivity {
     Button Okey;
     Bundle lugar;
     EditText Mision;
+    Bundle valor;
+    String valor_obt;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +21,8 @@ public class Fin extends AppCompatActivity {
 
         Okey=findViewById(R.id.Okey);
         Mision=findViewById(R.id.Mision);
+        valor=getIntent().getExtras();
+        valor_obt=valor.getString("Google");
 
         lugar = getIntent().getExtras();
         String mision_obt= lugar.getString("Cumplida");
@@ -26,6 +31,8 @@ public class Fin extends AppCompatActivity {
     }
 
     public void Aceptar(View view){
-        startActivity(new Intent(Fin.this,Inicio.class));
+        Intent cambiar=new Intent(Fin.this,Inicio.class);
+        cambiar.putExtra("Google",valor_obt);
+        startActivity(cambiar);
     }
 }

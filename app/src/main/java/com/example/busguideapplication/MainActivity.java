@@ -48,26 +48,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if((!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) && (!lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))){
-            AlertNoGps();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("El sistema GPS esta desactivado, ¿Desea activarlo?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            finish();
+                        }
+                    });
+            Dialog dialog=builder.create();
+            dialog.show();
         }
-    }
-
-    private void AlertNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("El sistema GPS esta desactivado, ¿Desea activarlo?")
-                .setCancelable(false)
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        finish();
-                    }
-                });
-        Dialog dialog=builder.create();
-        dialog.show();
     }
 
     public void Registrar (View view){
