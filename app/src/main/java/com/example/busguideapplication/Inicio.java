@@ -181,10 +181,15 @@ public class Inicio extends AppCompatActivity {
     }
 
     public void Salir(View view){
-        Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
-        //SIGN OUT
-        startActivity(new Intent(Inicio.this, MainActivity.class));
-        finish();
+        if(datos_obt.equals("1")){
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(Inicio.this, MainActivity.class));
+        }else{
+            Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
+            finish();
+            startActivity(new Intent(Inicio.this, MainActivity.class));
+        }
     }
 
     public void Configurar(View view){
