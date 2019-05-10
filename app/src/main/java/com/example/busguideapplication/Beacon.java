@@ -2,6 +2,7 @@ package com.example.busguideapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +15,10 @@ public class Beacon extends AppCompatActivity {
     Bundle datos,salida,destino,valor,check;
     TextView dates;
     Button parar, cambiar;
+    MediaPlayer mp;
     String lugar,numero_string;
     Integer numero;
+    long tiempo;
     private Vibrator vibrator;
     String salida_obt, destino_obt,valor_obt,datos_obt,check_obt;
 
@@ -37,11 +40,7 @@ public class Beacon extends AppCompatActivity {
 
         dates = findViewById(R.id.datos);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        if (vibrator.hasVibrator()) {
-            long tiempo = 800;
-            vibrator.vibrate(tiempo);
-        }
+        mp=MediaPlayer.create(this, R.raw.sonido);
 
         if(datos_obt.equals("FC:23:60:ED:0B:B7")) {
             lugar="Calle La Laguna Nº1";
@@ -70,6 +69,15 @@ public class Beacon extends AppCompatActivity {
 
         parar = findViewById(R.id.parar);
         cambiar= findViewById(R.id.cambiar);
+
+        if(lugar.equals(destino_obt)){
+            mp.start();
+        }else{
+            if (vibrator.hasVibrator()) {
+                tiempo = 800;
+                vibrator.vibrate(tiempo);
+            }
+        }
     }
 
     public void Parar_Informacion(View view){
@@ -77,6 +85,7 @@ public class Beacon extends AppCompatActivity {
             Intent llegar=new Intent(Beacon.this, Fin.class);
             llegar.putExtra("Cumplida",lugar);
             llegar.putExtra("Google",valor_obt);
+            mp.stop();
             startActivity(llegar);
         }else {
             Intent vuelta = new Intent(Beacon.this, Ruta.class);
