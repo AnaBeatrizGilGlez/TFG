@@ -103,8 +103,10 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         if(aux==1) {
             //pass_vernamm=Vernamm(pass);
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass);
+            //Iniciar sesion usuario
             Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
             Intent intent =new Intent(Registro.this,Inicio.class);
+            //Pasar e-mail
             intent.putExtra("Google","1");
             startActivity(intent);
         }

@@ -1,17 +1,16 @@
 package com.example.busguideapplication;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +31,7 @@ public class Inicio extends AppCompatActivity {
     TextView nombre_perfil;
     ImageView imagen,foto_perfil;
     String aux,aux_salida;
+    Integer aux_no=0;
     private String mDeviceList=null;
     String inicializar="null";
     Bundle datos;
@@ -43,29 +43,42 @@ public class Inicio extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
+            Log.i(String.valueOf(getApplicationContext()),"Pos nah" + mDeviceList);
             if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
                 stopScanning();
                 inicializar="Calle La Laguna Nº1";
+                aux_no=1;
+                Alerta();
             }
             if(mDeviceList.equals("CC:F7:38:83:39:83")){
                 stopScanning();
                 inicializar="Intercambiador La Laguna";
+                aux_no=1;
+                Alerta();
             }
             if(mDeviceList.equals("E2:C3:B1:E0:2D:8B")){
                 stopScanning();
                 inicializar="Calle Las peras Nº7";
+                aux_no=1;
+                Alerta();
             }
             if(mDeviceList.equals("C7:9B:B3:C7:B0:88")){
                 stopScanning();
                 inicializar="Intercambiador Santa Cruz";
+                aux_no=1;
+                Alerta();
             }
             if(mDeviceList.equals("E3:10:F4:C0:4F:0E")){
                 stopScanning();
                 inicializar="Autopista Norte";
+                aux_no=1;
+                Alerta();
             }
             if(mDeviceList.equals("E1:FF:56:62:7F:F3")){
                 stopScanning();
                 inicializar="Dulceria el Rayo";
+                aux_no=1;
+                Alerta();
             }
         }
 
@@ -169,6 +182,7 @@ public class Inicio extends AppCompatActivity {
 
     public void Salir(View view){
         Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
+        //SIGN OUT
         startActivity(new Intent(Inicio.this, MainActivity.class));
         finish();
     }
@@ -177,12 +191,74 @@ public class Inicio extends AppCompatActivity {
         startActivity(new Intent(Inicio.this,Configuracion.class));
     }
 
+    public void funcion_normal(){
+        if(aux.equals("Seleccione lugar")){
+            Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            if(aux_salida.equals("Seleccione lugar")){
+                Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida.",
+                        Toast.LENGTH_SHORT).show();
+            }else{
+                if(aux.equals(aux_salida)){
+                    Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
+                            Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                    stopScanning();
+                    cambiar.putExtra("Salida", aux_salida);
+                    cambiar.putExtra("Datos", aux);
+                    cambiar.putExtra("Google",datos_obt);
+                    cambiar.putExtra("Check","0");
+                    startActivity(cambiar);
+                }
+            }
+        }
+    }
+
+    public void Alerta(){
+        stopScanning();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("¿Quiere usted salir de la parada " + inicializar + "?")
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        salida_personas.setVisibility(View.GONE);
+                        start.setVisibility(View.GONE);
+                        if(aux.equals("Seleccione lugar")){
+                            Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
+                                    Toast.LENGTH_SHORT).show();
+                            aux_no=0;
+                        }else {
+                            if (aux.equals(inicializar)) {
+                                Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
+                                        Toast.LENGTH_SHORT).show();
+                                aux_no=0;
+                            } else {
+                                Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                                cambiar.putExtra("Salida", inicializar);
+                                cambiar.putExtra("Datos", aux);
+                                cambiar.putExtra("Google", datos_obt);
+                                cambiar.putExtra("Check", "0");
+                                startActivity(cambiar);
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        funcion_normal();
+                    }
+                });
+        Dialog dialog=builder.create();
+        dialog.show();
+    }
+
     public void Buscar_ruta(View view){
         if(aux.equals("Seleccione lugar")){
             Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                     Toast.LENGTH_SHORT).show();
         }else{
-            if (inicializar.equals( "null")) {
+            if (inicializar.equals( "null") || aux_no!=0) {
                 if(aux_salida.equals("Seleccione lugar")){
                     Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida. Ya que no se ha detectado ninguna parada",
                             Toast.LENGTH_SHORT).show();
@@ -192,7 +268,6 @@ public class Inicio extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }else{
                         Intent cambiar = new Intent(Inicio.this, Ruta.class);
-                        stopScanning();
                         cambiar.putExtra("Salida", aux_salida);
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google",datos_obt);
@@ -200,21 +275,24 @@ public class Inicio extends AppCompatActivity {
                         startActivity(cambiar);
                     }
                 }
-            }else {
-                salida_personas.setVisibility(View.GONE);
-                start.setVisibility(View.GONE);
-                if (aux.equals(inicializar)) {
-                    Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
+            }else{
+                if(aux.equals("Seleccione lugar")){
+                    Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                             Toast.LENGTH_SHORT).show();
-                    stopScanning();
-                }else{
-                    stopScanning();
-                    Intent cambiar = new Intent(Inicio.this, Ruta.class);
-                    cambiar.putExtra("Salida", inicializar);
-                    cambiar.putExtra("Datos", aux);
-                    cambiar.putExtra("Google",datos_obt);
-                    cambiar.putExtra("Check",0);
-                    startActivity(cambiar);
+                    aux_no=0;
+                }else {
+                    if (aux.equals(inicializar)) {
+                        Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
+                                Toast.LENGTH_SHORT).show();
+                        aux_no=0;
+                    } else {
+                        Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                        cambiar.putExtra("Salida", inicializar);
+                        cambiar.putExtra("Datos", aux);
+                        cambiar.putExtra("Google", datos_obt);
+                        cambiar.putExtra("Check", "0");
+                        startActivity(cambiar);
+                    }
                 }
             }
         }

@@ -42,6 +42,7 @@ public class Ruta extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
+            Log.i(String.valueOf(getApplicationContext()),"Pos sehh" + mDeviceList);
             if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
                 Intent cambiar = new Intent(Ruta.this,Beacon.class);
                 stopScanning();
@@ -81,6 +82,25 @@ public class Ruta extends AppCompatActivity {
                 cambiar.putExtra("Salida",salida_obt);
                 cambiar.putExtra("Check",check_obt);
                 startActivity(cambiar);
+            }
+            if(mDeviceList.equals("CC:F7:38:83:39:83")){
+                Intent cambiar = new Intent(Ruta.this,Beacon.class);
+                stopScanning();
+                cambiar.putExtra("Datos",mDeviceList);
+                cambiar.putExtra("Destino",datos_obt);
+                cambiar.putExtra("Google",valor_obt);
+                cambiar.putExtra("Salida",salida_obt);
+                cambiar.putExtra("Check",check_obt);
+                startActivity(cambiar);
+            }
+            if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
+                Intent cambiar = new Intent(Ruta.this,Beacon.class);
+                stopScanning();
+                cambiar.putExtra("Datos",mDeviceList);
+                cambiar.putExtra("Destino",datos_obt);
+                cambiar.putExtra("Google",valor_obt);
+                cambiar.putExtra("Salida",salida_obt);
+                cambiar.putExtra("Check",check_obt);
             }
         }
 
@@ -444,6 +464,7 @@ public class Ruta extends AppCompatActivity {
     public void Cancelar_Ruta (View view){
         Intent cambiar= new Intent(Ruta.this,Inicio.class);
         cambiar.putExtra("Google", valor_obt);
+        finish();
         startActivity(cambiar );
     }
 }
