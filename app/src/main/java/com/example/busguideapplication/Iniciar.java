@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class Iniciar extends AppCompatActivity {
     private EditText mail, Contraseña;
     FirebaseAuth.AuthStateListener mAuthListener;
+    private String Mensdescifr="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class Iniciar extends AppCompatActivity {
     }
 
     private void iniciarusuario(String email,String pass){
+        //Vernamm(pass);
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -63,6 +65,24 @@ public class Iniciar extends AppCompatActivity {
             }
         });
     }
+
+    /*public String Vernamm(String pass) {
+        Mensdescifr=XOR(Menscifrbin,claveale);
+        return Mensdescifr;
+    }
+
+    public static String XOR(String a, String b) {
+        String Result="";
+        String bin="01";
+        for(int i=a.length()-1;i>=0;i--){
+            if((b.charAt(i))==a.charAt(i)){
+                Result="0"+Result;
+            }else{
+                Result="1"+Result;
+            }
+        }
+        return Result;
+    }*/
 
     @Override
     protected void onStart(){

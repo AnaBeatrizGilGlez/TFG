@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
@@ -133,11 +134,9 @@ public class Ruta extends AppCompatActivity {
             uno.setText("No se baje en Calle La Laguna Nº1, continue hasta la siguiente parada");
             dos.setText("No se baje en Calle Las Peras, continue hasta la siguiente parada");
             tres.setText("Bajese en la parada Destino: " + datos_obt);
-
             cuatro.setVisibility(View.GONE);
             numeroparadas.setText("3");
             tiempo.setText("30 minutos");
-
             if(check_obt.equals("1")){
                 uno.setChecked(true);
             }else{
@@ -149,25 +148,28 @@ public class Ruta extends AppCompatActivity {
             if(salida_obt.equals(Calle_LL)){
                 numeroparadas.setText("2");
                 tiempo.setText("20 minutos");
-                uno.setVisibility(View.GONE);
+                uno.setText(dos.getText());
+                dos.setText(tres.getText());
+                tres.setVisibility(View.GONE);
                 if(check_obt.equals("1")){
-                    dos.setChecked(true);
+                    uno.setChecked(true);
                 }
             }else{
                 numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
-                uno.setVisibility(View.GONE);
+                uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
+                tres.setVisibility(View.GONE);
             }
         }else{
             if(((salida_obt.equals(SC) || (salida_obt.equals(Norte))) && datos_obt.equals(Dulceria))){
                 uno.setText("No se baje en Autopista Norte, continue hasta la siguiente parada");
                 dos.setText("Baje en Calle Las Peras, y coja la guagua número 8");
                 tres.setText("Bajese en la parada Destino: " + datos_obt);
-
                 cuatro.setVisibility(View.GONE);
                 numeroparadas.setText("3");
                 tiempo.setText("50 minutos");
+
                 if(check_obt.equals("1")){
                     uno.setChecked(true);
                 }else{
@@ -179,9 +181,11 @@ public class Ruta extends AppCompatActivity {
                 if(salida_obt.equals(Norte)){
                     numeroparadas.setText("2");
                     tiempo.setText("20 minutos");
-                    uno.setVisibility(View.GONE);
+                    uno.setText(dos.getText());
+                    dos.setText(tres.getText());
+                    tres.setVisibility(View.GONE);
                     if(check_obt.equals("1")){
-                        dos.setChecked(true);
+                        uno.setChecked(true);
                     }
                 }
             }
@@ -190,14 +194,16 @@ public class Ruta extends AppCompatActivity {
             tres.setText("Bajese en la parada Destino: " + datos_obt);
             cuatro.setVisibility(View.GONE);
             if(salida_obt.equals(LL) || salida_obt.equals(Dulceria)){
-                uno.setVisibility(View.GONE);
+                uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
+                tres.setVisibility(View.GONE);
                 numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
             }else{
                 if(salida_obt.equals(SC) || salida_obt.equals(Norte)){
                     uno.setText("No se baje en Autopista Norte.");
                     dos.setText("Bajese en calle Las Peras Nº7 y coja la guagua 305");
+                    tres.setVisibility(View.VISIBLE);
                     numeroparadas.setText("3");
                     tiempo.setText("50 minutos");
                     if(check_obt.equals("1")){
@@ -209,11 +215,13 @@ public class Ruta extends AppCompatActivity {
                         }
                     }
                     if(salida_obt.equals(Norte)){
-                        uno.setVisibility(View.GONE);
+                        uno.setText(dos.getText());
+                        dos.setText(tres.getText());
+                        tres.setVisibility(View.GONE);
                         numeroparadas.setText("2");
                         tiempo.setText("20 minutos");
                         if(check_obt.equals("2")){
-                            dos.setChecked(true);
+                            uno.setChecked(true);
                         }
                     }
                 }
@@ -224,11 +232,12 @@ public class Ruta extends AppCompatActivity {
             tres.setVisibility(View.GONE);
             cuatro.setVisibility(View.GONE);
             if(salida_obt.equals(Dulceria) || salida_obt.equals(Calle_LL) || salida_obt.equals(Norte)){
-                uno.setVisibility(View.GONE);
+                uno.setText(dos.getText());
+                dos.setVisibility(View.GONE);
                 tiempo.setText("10 minutos");
                 numeroparadas.setText("1");
             }else{
-                uno.setText("No se baje en Autopista Norte.");
+                uno.setText("No se baje en " + Norte);
                 tiempo.setText("40 minutos");
                 numeroparadas.setText("2");
                 if(check_obt.equals("1")){
@@ -243,15 +252,17 @@ public class Ruta extends AppCompatActivity {
         if(datos_obt.equals(LL)){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
             if(salida_obt.equals(Calle_LL)){
-                uno.setVisibility(View.GONE);
+                uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
+                cuatro.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
                 tiempo.setText("10 minutos");
                 numeroparadas.setText("1");
             }else{
                 if(salida_obt.equals(Peras)){
                     uno.setText("No se baje en " + Calle_LL);
-                    dos.setVisibility(View.GONE);
+                    dos.setText(cuatro.getText());
+                    cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
                     tiempo.setText("20 minutos");
                     numeroparadas.setText("2");
@@ -262,7 +273,8 @@ public class Ruta extends AppCompatActivity {
                     if(salida_obt.equals(Norte) || (salida_obt.equals(Dulceria))){
                         uno.setText("No se baje en " + Peras);
                         dos.setText("No se baje en " + Calle_LL);
-                        tres.setVisibility(View.GONE);
+                        tres.setText(cuatro.getText());
+                        cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
                         numeroparadas.setText("3");
                         if(check_obt.equals("1")){
@@ -281,6 +293,7 @@ public class Ruta extends AppCompatActivity {
                             uno.setText("No se baje en " + Norte);
                             dos.setText("Bajese en " + Peras + " y coja la guagua numero 308");
                             tres.setText("No se baje en " + Calle_LL);
+                            cuatro.setVisibility(View.VISIBLE);
                             tiempo.setText("1 hora");
                             numeroparadas.setText("4");
                             if(check_obt.equals("1")){
@@ -305,8 +318,9 @@ public class Ruta extends AppCompatActivity {
         if(datos_obt.equals(Norte)){
             tres.setText("Bajese en la parada Destino: " + datos_obt);
             if(salida_obt.equals(SC) || salida_obt.equals(Peras)){
-                uno.setVisibility(View.GONE);
+                uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
+                tres.setVisibility(View.GONE);
                 cuatro.setVisibility(View.GONE);
                 tiempo.setText("30 minutos");
                 numeroparadas.setText("1");
@@ -316,7 +330,8 @@ public class Ruta extends AppCompatActivity {
             }else{
                 if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
                     uno.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
-                    dos.setVisibility(View.GONE);
+                    dos.setText(tres.getText());
+                    tres.setVisibility(View.GONE);
                     cuatro.setVisibility(View.GONE);
                     tiempo.setText("20 minutos");
                     numeroparadas.setText("2");
@@ -327,6 +342,7 @@ public class Ruta extends AppCompatActivity {
                     if(salida_obt.equals(LL)){
                         uno.setText("No se baje en la parada "+ Calle_LL);
                         dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
+                        tres.setVisibility(View.VISIBLE);
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
                         numeroparadas.setText("3");
@@ -345,15 +361,17 @@ public class Ruta extends AppCompatActivity {
         if(datos_obt.equals(SC)){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
             if(salida_obt.equals(Norte)){
-                uno.setVisibility(View.GONE);
+                uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
+                cuatro.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
                 tiempo.setText("30 minutos");
                 numeroparadas.setText("1");
             }else{
                 if(salida_obt.equals(Peras)){
                     uno.setText("No se baje en la parada" + Norte);
-                    dos.setVisibility(View.GONE);
+                    dos.setText(cuatro.getText());
+                    cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
                     tiempo.setText("40 minutos");
                     numeroparadas.setText("2");
@@ -364,7 +382,8 @@ public class Ruta extends AppCompatActivity {
                     if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
                         uno.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
                         dos.setText("No se baje en la parada " + Norte);
-                        tres.setVisibility(View.GONE);
+                        tres.setText(cuatro.getText());
+                        cuatro.setVisibility(View.GONE);
                         tiempo.setText("50 minutos");
                         numeroparadas.setText("3");
                         if(check_obt.equals("1")){
@@ -379,6 +398,7 @@ public class Ruta extends AppCompatActivity {
                         uno.setText("No se baje en la parada" + Calle_LL);
                         dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
                         tres.setText("No se baje en la parada " + Norte);
+                        cuatro.setVisibility(View.VISIBLE);
                         tiempo.setText("1 hora");
                         numeroparadas.setText("4");
                         if(check_obt.equals("1")){

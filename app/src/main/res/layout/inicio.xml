@@ -95,8 +95,8 @@
 
     <ImageView
             android:id="@+id/imagen"
-            android:layout_width="27dp"
-            android:layout_height="22dp"
+            android:layout_width="36dp"
+            android:layout_height="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -104,17 +104,17 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.904"
+            app:layout_constraintHorizontal_bias="0.888"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.024"
+            app:layout_constraintVertical_bias="0.011"
             android:onClick="Configurar"
             app:srcCompat="@drawable/setting"/>
 
     <ImageView
             android:id="@+id/salir"
-            android:layout_width="28dp"
-            android:layout_height="22dp"
+            android:layout_width="30dp"
+            android:layout_height="29dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -124,24 +124,23 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.007"
+            app:layout_constraintVertical_bias="0.01"
             android:onClick="Salir"
             app:srcCompat="@drawable/salir"/>
 
     <ImageView
             android:id="@+id/foto_perfil"
-            android:layout_width="43dp"
-            android:layout_height="39dp"
+            android:layout_width="59dp"
+            android:layout_height="38dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.007"/>
+            app:layout_constraintVertical_bias="0.007" app:layout_constraintEnd_toEndOf="@+id/salir"
+            android:layout_marginEnd="8dp" app:layout_constraintHorizontal_bias="0.024"/>
+
     <View android:layout_width="480dp" android:layout_height="2dp" android:background="@color/Colorbuttom"
           app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
           app:layout_constraintStart_toStartOf="parent"

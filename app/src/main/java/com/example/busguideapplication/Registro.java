@@ -1,12 +1,10 @@
 package com.example.busguideapplication;
 
 import android.content.Intent;
-import android.graphics.BitmapRegionDecoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +14,6 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,9 +25,16 @@ import java.util.regex.Pattern;
 public class Registro extends AppCompatActivity implements  GoogleApiClient.OnConnectionFailedListener{
 
     private static final Object TAG = "Signin" ;
+    private static String bin;
+    private static String Loribina;
     private EditText mail, Contraseña, Repetir;
     private GoogleApiClient googleApiClient;
     Integer aux=0;
+    int Letra;
+    String Mensbin="";
+    String claveale="";
+    String Menscifrbin,pass_vernamm;
+    private static String Result="";
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -81,7 +85,6 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
                 }
             }
         }
-
         registrarUsuario(email,pass);
     }
 
@@ -98,6 +101,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         });
 
         if(aux==1) {
+            //pass_vernamm=Vernamm(pass);
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass);
             Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
             Intent intent =new Intent(Registro.this,Inicio.class);
@@ -105,6 +109,54 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
             startActivity(intent);
         }
     }
+
+    /*public String Vernamm(String pass){
+        for(int i=0; i<pass.length();i++){
+            Letra=pass.charAt(i);
+            String Moribina = obt(Letra);
+            Mensbin=Mensbin.concat(Moribina);
+        }
+        //claveale=ale(Mensbin);
+        for(int i=0;i<Mensbin.length();i++){
+            if(i%2==0){
+                claveale=claveale.concat("0");
+            }else{
+                claveale=claveale.concat("1");
+            }
+        }
+
+        Menscifrbin=XOR(Mensbin,claveale);
+        return Menscifrbin;
+    }
+
+    public static String XOR(String a, String b) {
+        bin="01";
+        for(int i=a.length()-1;i>=0;i--){
+            if((b.charAt(i))==a.charAt(i)){
+                Result=Result.concat("0");
+            }else{
+                Result=Result.concat("1");
+            }
+        }
+        return Result;
+    }*/
+
+    /*public static String ale(String b){
+        String claveale="";
+        for(int i=0;i<b.length();i++){
+            int numero = (int) (Math.floor(Math.random()*2));
+            claveale=claveale+numero;
+        }
+        return claveale;
+    }*/
+
+    /*public static String obt(int letra){
+        Loribina=Integer.toBinaryString(letra);
+        while(Loribina.length() < 8){
+            Loribina=Loribina.concat("0");
+        }
+        return Loribina;
+    }*/
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
