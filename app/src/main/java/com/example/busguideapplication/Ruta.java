@@ -426,7 +426,6 @@ public class Ruta extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Log.i(String.valueOf(getApplicationContext()),"Hellooooo");
                 btScanner.startScan(leScanCallback);
             }
         });

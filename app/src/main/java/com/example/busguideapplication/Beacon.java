@@ -1,9 +1,10 @@
 package com.example.busguideapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ public class Beacon extends AppCompatActivity {
     Button parar, cambiar;
     String lugar,numero_string;
     Integer numero;
+    private Vibrator vibrator;
     String salida_obt, destino_obt,valor_obt,datos_obt,check_obt;
 
     @Override
@@ -34,6 +36,13 @@ public class Beacon extends AppCompatActivity {
         check_obt=check.getString("Check");
 
         dates = findViewById(R.id.datos);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        if (vibrator.hasVibrator()) {
+            long tiempo = 800;
+            vibrator.vibrate(tiempo);
+        }
+
         if(datos_obt.equals("FC:23:60:ED:0B:B7")) {
             lugar="Calle La Laguna Nº1";
             dates.setText("Calle La Laguna Nº1");
