@@ -52,7 +52,8 @@ public class Beacon extends AppCompatActivity {
         }
         if(datos_obt.equals("E1:FF:56:62:7F:F3")){
             lugar="Dulceria el Rayo";
-            dates.setText("Dulceria el Rayo");
+            dates.setText("Calle Las Peras Nº7");
+            //dates.setText("Dulceria el Rayo");
         }
         if(datos_obt.equals("CC:F7:38:83:39:83")){
             lugar="Intercambiador La Laguna";
@@ -86,6 +87,7 @@ public class Beacon extends AppCompatActivity {
             llegar.putExtra("Cumplida",lugar);
             llegar.putExtra("Google",valor_obt);
             mp.stop();
+            finish();
             startActivity(llegar);
         }else {
             Intent vuelta = new Intent(Beacon.this, Ruta.class);
@@ -96,6 +98,7 @@ public class Beacon extends AppCompatActivity {
             vuelta.putExtra("Datos", destino_obt);
             vuelta.putExtra("Google",valor_obt);
             vuelta.putExtra("Check",numero_string);
+            finish();
             startActivity(vuelta);
         }
     }
@@ -103,6 +106,7 @@ public class Beacon extends AppCompatActivity {
     public void Cambiar_Ruta(View view){
         Intent cambiar = new Intent(Beacon.this,Inicio.class);
         cambiar.putExtra("Google",valor_obt);
+        finish();
         startActivity(cambiar);
     }
 }

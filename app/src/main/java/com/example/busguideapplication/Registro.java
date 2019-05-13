@@ -5,20 +5,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.*;
 
 import java.util.regex.Pattern;
 
@@ -30,11 +31,8 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
     private EditText mail, Contraseña, Repetir;
     private GoogleApiClient googleApiClient;
     Integer aux=0;
-    int Letra;
-    String Mensbin="";
-    String claveale="";
-    String Menscifrbin,pass_vernamm;
-    private static String Result="";
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener firebaseauthlistener;
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -45,9 +43,26 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         Contraseña= findViewById(R.id.Contraseña);
         Repetir= findViewById(R.id.Repetir);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail().build();
+
+        /*GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail().build();*/
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseauthlistener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user= firebaseAuth.getCurrentUser();
+                if(user!=null){
+                    goMainScreen();
+                }
+            }
+        };
+
 
         Button google = findViewById(R.id.google);
 
@@ -58,6 +73,13 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
                 startActivityForResult(intent,777);
             }
         });
+    }
+
+    @Override
+    protected  void onStart(){
+        super.onStart();
+
+        firebaseAuth.addAuthStateListener(firebaseauthlistener);
     }
 
     public void registrar(View view){
@@ -101,64 +123,19 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         });
 
         if(aux==1) {
-            //pass_vernamm=Vernamm(pass);
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass);
-            //Iniciar sesion usuario
-            Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
-            Intent intent =new Intent(Registro.this,Inicio.class);
-            //Pasar e-mail
-            intent.putExtra("Google","1");
-            startActivity(intent);
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
+                        Intent intent =new Intent(Registro.this,Inicio.class);
+                        intent.putExtra("Google","1");
+                        startActivity(intent);
+                    }
+                }
+            });
         }
     }
-
-    /*public String Vernamm(String pass){
-        for(int i=0; i<pass.length();i++){
-            Letra=pass.charAt(i);
-            String Moribina = obt(Letra);
-            Mensbin=Mensbin.concat(Moribina);
-        }
-        //claveale=ale(Mensbin);
-        for(int i=0;i<Mensbin.length();i++){
-            if(i%2==0){
-                claveale=claveale.concat("0");
-            }else{
-                claveale=claveale.concat("1");
-            }
-        }
-
-        Menscifrbin=XOR(Mensbin,claveale);
-        return Menscifrbin;
-    }
-
-    public static String XOR(String a, String b) {
-        bin="01";
-        for(int i=a.length()-1;i>=0;i--){
-            if((b.charAt(i))==a.charAt(i)){
-                Result=Result.concat("0");
-            }else{
-                Result=Result.concat("1");
-            }
-        }
-        return Result;
-    }*/
-
-    /*public static String ale(String b){
-        String claveale="";
-        for(int i=0;i<b.length();i++){
-            int numero = (int) (Math.floor(Math.random()*2));
-            claveale=claveale+numero;
-        }
-        return claveale;
-    }*/
-
-    /*public static String obt(int letra){
-        Loribina=Integer.toBinaryString(letra);
-        while(Loribina.length() < 8){
-            Loribina=Loribina.concat("0");
-        }
-        return Loribina;
-    }*/
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -176,10 +153,23 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
     protected void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
-            goMainScreen();
+            //goMainScreen();
+            firebaseAuthWithGoogle(result.getSignInAccount());
         }else{
             Toast.makeText(this, "No es posible entrar con ese correo", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount signInAccount){
+        AuthCredential credential = GoogleAuthProvider.getCredential(signInAccount.getIdToken(),null);
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(!task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(),"No se puede autenticar con Firebase", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void goMainScreen(){
@@ -188,4 +178,14 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+
+        if(firebaseauthlistener!=null){
+            firebaseAuth.removeAuthStateListener(firebaseauthlistener);
+        }
+    }
+
 }

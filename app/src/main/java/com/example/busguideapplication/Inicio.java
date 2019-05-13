@@ -10,17 +10,28 @@ import android.bluetooth.le.ScanResult;
 import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
-public class Inicio extends AppCompatActivity {
+public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "Inicio" ;
     BluetoothManager btManager;
     BluetoothAdapter btAdapter;
@@ -29,6 +40,7 @@ public class Inicio extends AppCompatActivity {
     Spinner combolugares,salida_personas;
     Button buscar;
     TextView nombre_perfil;
+    private GoogleApiClient googleApiClient;
     ImageView imagen,foto_perfil;
     String aux,aux_salida;
     Integer aux_no=0;
@@ -38,6 +50,8 @@ public class Inicio extends AppCompatActivity {
     String datos_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -101,24 +115,47 @@ public class Inicio extends AppCompatActivity {
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
 
+        datos = getIntent().getExtras();
+        foto_perfil=findViewById(R.id.foto_perfil);
+        datos_obt= datos.getString("Google");
+
+        if(datos_obt.equals("0")) {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this,this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
+
+            firebaseAuth = FirebaseAuth.getInstance();
+            firebaseAuthListener= new FirebaseAuth.AuthStateListener() {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if(user!=null){
+                        setUserData(user);
+                    }else{
+                        goLogInscreen();
+                    }
+                }
+            };
+        }
+
         combolugares= findViewById(R.id.spinnerlugares);
         salida_personas=findViewById(R.id.salida_persona);
         imagen = findViewById(R.id.imagen);
         buscar=findViewById(R.id.buscar);
         start=findViewById(R.id.Start);
         nombre_perfil=findViewById(R.id.nombre_perfil);
-        datos = getIntent().getExtras();
-        foto_perfil=findViewById(R.id.foto_perfil);
-        datos_obt= datos.getString("Google");
         startScanning();
 
         FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-        Log.i(TAG, "Usuario " + user.getDisplayName());
         if(user!=null) {
             if (datos_obt.equals("1")) {
                 if(!(user.getDisplayName() ==null)) {
-                    String name = user.getDisplayName();
-                    nombre_perfil.setText("Bienvenido/a " + name);
+                    nombre_perfil.setText("Bienvenido/a " + user.getDisplayName());
                 }else{
                     nombre_perfil.setText("Bienvenido/a " + user.getEmail());
                 }
@@ -130,8 +167,7 @@ public class Inicio extends AppCompatActivity {
                     foto_perfil.setVisibility(View.GONE);
                 }
             } else {
-                imagen.setVisibility(View.GONE);
-                nombre_perfil.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                setUserData(user);
             }
         }
 
@@ -161,6 +197,33 @@ public class Inicio extends AppCompatActivity {
         });
     }
 
+    private void setUserData(FirebaseUser user){
+        nombre_perfil.setText("Bienvenido/a " + user.getEmail());
+        Glide.with(this).load(user.getPhotoUrl()).into(foto_perfil);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        firebaseAuth.addAuthStateListener(firebaseAuthListener);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+
+        if(firebaseAuthListener!=null){
+            firebaseAuth.removeAuthStateListener(firebaseAuthListener);
+        }
+    }
+
+    private void goLogInscreen(){
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     public void startScanning() {
         System.out.println("start scanning");
         AsyncTask.execute(new Runnable() {
@@ -186,13 +249,22 @@ public class Inicio extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Inicio.this, MainActivity.class));
         }else{
-            Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
-            finish();
-            startActivity(new Intent(Inicio.this, MainActivity.class));
+            firebaseAuth.signOut();
+            Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(@NonNull Status status) {
+                    if(status.isSuccess()){
+                        goLogInscreen();
+                    }else{
+                        Toast.makeText(getApplicationContext(), "No se puede cerrar sesión", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         }
     }
 
     public void Configurar(View view){
+        finish();
         startActivity(new Intent(Inicio.this,Configuracion.class));
     }
 
@@ -215,6 +287,7 @@ public class Inicio extends AppCompatActivity {
                     cambiar.putExtra("Datos", aux);
                     cambiar.putExtra("Google",datos_obt);
                     cambiar.putExtra("Check","0");
+                    finish();
                     startActivity(cambiar);
                 }
             }
@@ -244,6 +317,7 @@ public class Inicio extends AppCompatActivity {
                                 cambiar.putExtra("Datos", aux);
                                 cambiar.putExtra("Google", datos_obt);
                                 cambiar.putExtra("Check", "0");
+                                finish();
                                 startActivity(cambiar);
                             }
                         }
@@ -277,6 +351,7 @@ public class Inicio extends AppCompatActivity {
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google",datos_obt);
                         cambiar.putExtra("Check","0");
+                        finish();
                         startActivity(cambiar);
                     }
                 }
@@ -296,10 +371,16 @@ public class Inicio extends AppCompatActivity {
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google", datos_obt);
                         cambiar.putExtra("Check", "0");
+                        finish();
                         startActivity(cambiar);
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

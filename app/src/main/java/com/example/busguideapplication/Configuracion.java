@@ -62,6 +62,7 @@ public class Configuracion extends AppCompatActivity {
     public void Salir(View view){
         Intent intent=new Intent(Configuracion.this,Inicio.class);
         intent.putExtra("Google","1");
+        finish();
         startActivity(intent);
     }
 
@@ -83,18 +84,20 @@ public class Configuracion extends AppCompatActivity {
                 user.updatePassword(contraseña_nueva);
                 Intent intent=new Intent(Configuracion.this,Inicio.class);
                 intent.putExtra("Google","1");
-                startActivity(intent);
                 finish();
+                startActivity(intent);
             }
         }else{
             Intent intent=new Intent(Configuracion.this,Inicio.class);
             intent.putExtra("Google","1");
+            finish();
             startActivity(intent);
         }
 
         if(aux.equals("1")){
             Intent intent=new Intent(Configuracion.this,Inicio.class);
             intent.putExtra("Google","1");
+            finish();
             startActivity(intent);
         }
     }
