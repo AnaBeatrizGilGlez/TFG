@@ -159,10 +159,14 @@ public class Ruta extends AppCompatActivity {
             tiempo.setText("30 minutos");
             if(check_obt.equals("1")){
                 uno.setChecked(true);
+                numeroparadas.setText("2");
+                tiempo.setText("20 minutos");
             }else{
                 if(check_obt.equals("2")){
                     uno.setChecked(true);
                     dos.setChecked(true);
+                    numeroparadas.setText("1");
+                    tiempo.setText("10 minutos");
                 }
             }
             if(salida_obt.equals(Calle_LL)){
@@ -173,6 +177,8 @@ public class Ruta extends AppCompatActivity {
                 tres.setVisibility(View.GONE);
                 if(check_obt.equals("1")){
                     uno.setChecked(true);
+                    numeroparadas.setText("1");
+                    tiempo.setText("10 minutos");
                 }
             }else{
                 numeroparadas.setText("1");
@@ -192,10 +198,14 @@ public class Ruta extends AppCompatActivity {
 
                 if(check_obt.equals("1")){
                     uno.setChecked(true);
+                    numeroparadas.setText("2");
+                    tiempo.setText("20 minutos");
                 }else{
                     if(check_obt.equals("2")){
                         uno.setChecked(true);
                         dos.setChecked(true);
+                        numeroparadas.setText("1");
+                        tiempo.setText("10 minutos");
                     }
                 }
                 if(salida_obt.equals(Norte)){
@@ -205,7 +215,9 @@ public class Ruta extends AppCompatActivity {
                     dos.setText(tres.getText());
                     tres.setVisibility(View.GONE);
                     if(check_obt.equals("1")){
+                        numeroparadas.setText("1");
                         uno.setChecked(true);
+                        tiempo.setText("10 minutos");
                     }
                 }
             }
@@ -228,10 +240,14 @@ public class Ruta extends AppCompatActivity {
                     tiempo.setText("50 minutos");
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
+                        numeroparadas.setText("2");
+                        tiempo.setText("20 minutos");
                     }else{
                         if(check_obt.equals("2")){
                             uno.setChecked(true);
                             dos.setChecked(true);
+                            numeroparadas.setText("1");
+                            tiempo.setText("10 minutos");
                         }
                     }
                     if(salida_obt.equals(Norte)){
@@ -242,6 +258,8 @@ public class Ruta extends AppCompatActivity {
                         tiempo.setText("20 minutos");
                         if(check_obt.equals("2")){
                             uno.setChecked(true);
+                            numeroparadas.setText("1");
+                            tiempo.setText("10 minutos");
                         }
                     }
                 }
@@ -262,10 +280,17 @@ public class Ruta extends AppCompatActivity {
                 numeroparadas.setText("2");
                 if(check_obt.equals("1")){
                     uno.setChecked(true);
+                    numeroparadas.setText("1");
+                    tiempo.setText("10 minutos");
                 }
                 if(salida_obt.equals(LL)){
                     tiempo.setText("20 minutos");
                     uno.setText("No se baje en " + Calle_LL);
+                    if(check_obt.equals("1")){
+                        uno.setChecked(true);
+                        numeroparadas.setText("1");
+                        tiempo.setText("10 minutos");
+                    }
                 }
             }
         }
@@ -288,6 +313,8 @@ public class Ruta extends AppCompatActivity {
                     numeroparadas.setText("2");
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
+                        numeroparadas.setText("1");
+                        tiempo.setText("10 minutos");
                     }
                 }else{
                     if(salida_obt.equals(Norte) || (salida_obt.equals(Dulceria))){
@@ -299,10 +326,14 @@ public class Ruta extends AppCompatActivity {
                         numeroparadas.setText("3");
                         if(check_obt.equals("1")){
                             uno.setChecked(true);
+                            numeroparadas.setText("2");
+                            tiempo.setText("20 minutos");
                         }else{
                             if(check_obt.equals("2")){
                                 uno.setChecked(true);
                                 dos.setChecked(true);
+                                numeroparadas.setText("1");
+                                tiempo.setText("10 minutos");
                             }
                         }
                         if(salida_obt.equals(Norte)){
@@ -318,15 +349,21 @@ public class Ruta extends AppCompatActivity {
                             numeroparadas.setText("4");
                             if(check_obt.equals("1")){
                                 uno.setChecked(true);
+                                numeroparadas.setText("3");
+                                tiempo.setText("30 minutos");
                             }else{
                                 if(check_obt.equals("2")){
                                     uno.setChecked(true);
                                     dos.setChecked(true);
+                                    numeroparadas.setText("2");
+                                    tiempo.setText("20 minutos");
                                 }else{
                                     if(check_obt.equals("3")){
                                         uno.setChecked(true);
                                         dos.setChecked(true);
                                         tres.setChecked(true);
+                                        numeroparadas.setText("1");
+                                        tiempo.setText("10 minutos");
                                     }
                                 }
                             }
@@ -357,6 +394,8 @@ public class Ruta extends AppCompatActivity {
                     numeroparadas.setText("2");
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
+                        numeroparadas.setText("1");
+                        tiempo.setText("10 minutos");
                     }
                 }else{
                     if(salida_obt.equals(LL)){
@@ -368,10 +407,14 @@ public class Ruta extends AppCompatActivity {
                         numeroparadas.setText("3");
                         if(check_obt.equals("1")){
                             uno.setChecked(true);
+                            numeroparadas.setText("2");
+                            tiempo.setText("20 minutos");
                         }else{
                             if(check_obt.equals("2")){
                                 uno.setChecked(true);
                                 dos.setChecked(true);
+                                numeroparadas.setText("1");
+                                tiempo.setText("10 minutos");
                             }
                         }
                     }
@@ -397,6 +440,8 @@ public class Ruta extends AppCompatActivity {
                     numeroparadas.setText("2");
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
+                        numeroparadas.setText("1");
+                        tiempo.setText("10 minutos");
                     }
                 }else{
                     if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
@@ -408,10 +453,14 @@ public class Ruta extends AppCompatActivity {
                         numeroparadas.setText("3");
                         if(check_obt.equals("1")){
                             uno.setChecked(true);
+                            numeroparadas.setText("2");
+                            tiempo.setText("20 minutos");
                         }else{
                             if(check_obt.equals("2")){
                                 uno.setChecked(true);
                                 dos.setChecked(true);
+                                numeroparadas.setText("1");
+                                tiempo.setText("10 minutos");
                             }
                         }
                     }else{
@@ -423,15 +472,21 @@ public class Ruta extends AppCompatActivity {
                         numeroparadas.setText("4");
                         if(check_obt.equals("1")){
                             uno.setChecked(true);
+                            numeroparadas.setText("3");
+                            tiempo.setText("30 minutos");
                         }else{
                             if(check_obt.equals("2")){
                                 uno.setChecked(true);
                                 dos.setChecked(true);
+                                numeroparadas.setText("2");
+                                tiempo.setText("20 minutos");
                             }else{
                                 if(check_obt.equals("3")){
                                     uno.setChecked(true);
                                     dos.setChecked(true);
                                     tres.setChecked(true);
+                                    numeroparadas.setText("1");
+                                    tiempo.setText("10 minutos");
                                 }
                             }
                         }
@@ -465,6 +520,6 @@ public class Ruta extends AppCompatActivity {
         Intent cambiar= new Intent(Ruta.this,Inicio.class);
         cambiar.putExtra("Google", valor_obt);
         finish();
-        startActivity(cambiar );
+        startActivity(cambiar);
     }
 }
