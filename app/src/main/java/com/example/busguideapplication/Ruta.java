@@ -37,7 +37,7 @@ public class Ruta extends AppCompatActivity {
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
             if (mDeviceList.equals(Intercambiador_SC.getDispositivo())) {
-                if(!Intercambiador_SC.disp_enc()) {
+                if(!(Intercambiador_SC.disp_enc()) && Intercambiador_SC.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Objeto_sc",Intercambiador_SC);
@@ -55,7 +55,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if(mDeviceList.equals(Peras.getDispositivo())){
-                if(!Peras.disp_enc()) {
+                if(!(Peras.disp_enc()) && Peras.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Datos", mDeviceList);
@@ -73,7 +73,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if(mDeviceList.equals(Rayo.getDispositivo())){
-                if(!Rayo.disp_enc()) {
+                if(!(Rayo.disp_enc()) && Rayo.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Datos", mDeviceList);
@@ -91,7 +91,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if(mDeviceList.equals(Norte.getDispositivo())){
-                if(!Norte.disp_enc()) {
+                if(!(Norte.disp_enc())&& Norte.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Datos", mDeviceList);
@@ -109,7 +109,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if(mDeviceList.equals(Intercambiador_LL.getDispositivo())){
-                if(!Intercambiador_LL.disp_enc()) {
+                if(!(Intercambiador_LL.disp_enc()) && Intercambiador_LL.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Datos", mDeviceList);
@@ -127,7 +127,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if (mDeviceList.equals(LL.getDispositivo())) {
-                if(!LL.disp_enc()) {
+                if(!(LL.disp_enc()) && LL.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
                     cambiar.putExtra("Datos", mDeviceList);
@@ -200,8 +200,11 @@ public class Ruta extends AppCompatActivity {
         if((salida_obt.equals(Peras.getNombre()) || salida_obt.equals(Intercambiador_LL.getNombre()) || salida_obt.equals(LL.getNombre()))
                 && datos_obt.equals(Rayo.getNombre())){
             uno.setText("No se baje en Calle La Laguna Nº1, continue hasta la siguiente parada");
+            LL.setEn_ruta(true);
             dos.setText("No se baje en Calle Las Peras, continue hasta la siguiente parada");
+            Peras.setEn_ruta(true);
             tres.setText("Bajese en la parada Destino: " + datos_obt);
+            Rayo.setEn_ruta(true);
             cuatro.setVisibility(View.GONE);
             numeroparadas.setText("3");
             tiempo.setText("30 minutos");
@@ -218,6 +221,7 @@ public class Ruta extends AppCompatActivity {
                 }
             }
             if(salida_obt.equals(LL.getNombre())){
+                LL.setEn_ruta(false);
                 numeroparadas.setText("2");
                 tiempo.setText("20 minutos");
                 uno.setText(dos.getText());
@@ -229,6 +233,7 @@ public class Ruta extends AppCompatActivity {
                     tiempo.setText("10 minutos");
                 }
             }else{
+                Peras.setEn_ruta(false);
                 numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
                 uno.setText(tres.getText());
@@ -238,8 +243,11 @@ public class Ruta extends AppCompatActivity {
         }else{
             if(((salida_obt.equals(Intercambiador_SC.getNombre()) || (salida_obt.equals(Norte.getNombre()))) && datos_obt.equals(Rayo.getNombre()))){
                 uno.setText("No se baje en Autopista Norte, continue hasta la siguiente parada");
+                Norte.setEn_ruta(true);
                 dos.setText("Baje en Calle Las Peras, y coja la guagua número 8");
+                Peras.setEn_ruta(true);
                 tres.setText("Bajese en la parada Destino: " + datos_obt);
+                Rayo.setEn_ruta(true);
                 cuatro.setVisibility(View.GONE);
                 numeroparadas.setText("3");
                 tiempo.setText("50 minutos");
@@ -257,6 +265,7 @@ public class Ruta extends AppCompatActivity {
                     }
                 }
                 if(salida_obt.equals(Norte.getNombre())){
+                    Norte.setEn_ruta(false);
                     numeroparadas.setText("2");
                     tiempo.setText("20 minutos");
                     uno.setText(dos.getText());
@@ -272,6 +281,7 @@ public class Ruta extends AppCompatActivity {
         }
         if(datos_obt.equals(LL.getNombre())){
             tres.setText("Bajese en la parada Destino: " + datos_obt);
+            LL.setEn_ruta(true);
             cuatro.setVisibility(View.GONE);
             if(salida_obt.equals(LL) || salida_obt.equals(Rayo.getNombre())){
                 uno.setText(tres.getText());
@@ -282,7 +292,9 @@ public class Ruta extends AppCompatActivity {
             }else{
                 if(salida_obt.equals(Intercambiador_SC.getNombre()) || salida_obt.equals(Norte.getNombre())){
                     uno.setText("No se baje en Autopista Norte.");
+                    Norte.setEn_ruta(true);
                     dos.setText("Bajese en calle Las Peras Nº7 y coja la guagua 305");
+                    Peras.setEn_ruta(true);
                     tres.setVisibility(View.VISIBLE);
                     numeroparadas.setText("3");
                     tiempo.setText("50 minutos");
@@ -299,7 +311,9 @@ public class Ruta extends AppCompatActivity {
                         }
                     }
                     if(salida_obt.equals(Norte.getNombre())){
+                        Norte.setEn_ruta(false);
                         uno.setText(dos.getText());
+                        Peras.setEn_ruta(true);
                         dos.setText(tres.getText());
                         tres.setVisibility(View.GONE);
                         numeroparadas.setText("2");
@@ -315,6 +329,7 @@ public class Ruta extends AppCompatActivity {
         }
         if(datos_obt.equals(Peras.getNombre())){
             dos.setText("Bajese en la parada Destino: " + datos_obt);
+            Peras.setEn_ruta(true);
             tres.setVisibility(View.GONE);
             cuatro.setVisibility(View.GONE);
             if(salida_obt.equals(Rayo.getNombre()) || salida_obt.equals(LL.getNombre()) || salida_obt.equals(Norte.getNombre())){
@@ -323,7 +338,8 @@ public class Ruta extends AppCompatActivity {
                 tiempo.setText("10 minutos");
                 numeroparadas.setText("1");
             }else{
-                uno.setText("No se baje en " + Norte.getNombre()    );
+                uno.setText("No se baje en " + Norte.getNombre());
+                Norte.setEn_ruta(true);
                 tiempo.setText("40 minutos");
                 numeroparadas.setText("2");
                 if(check_obt.equals("1")){
@@ -333,6 +349,8 @@ public class Ruta extends AppCompatActivity {
                 }
                 if(salida_obt.equals(Intercambiador_LL.getNombre())){
                     tiempo.setText("20 minutos");
+                    Norte.setEn_ruta(false);
+                    LL.setEn_ruta(true);
                     uno.setText("No se baje en " + LL.getNombre());
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
@@ -344,6 +362,7 @@ public class Ruta extends AppCompatActivity {
         }
         if(datos_obt.equals(Intercambiador_LL.getNombre())){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
+            Intercambiador_LL.setEn_ruta(true);
             if(salida_obt.equals(LL.getNombre())){
                 uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
@@ -354,6 +373,7 @@ public class Ruta extends AppCompatActivity {
             }else{
                 if(salida_obt.equals(Peras.getNombre())){
                     uno.setText("No se baje en " + LL.getNombre());
+                    LL.setEn_ruta(true);
                     dos.setText(cuatro.getText());
                     cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
@@ -367,7 +387,9 @@ public class Ruta extends AppCompatActivity {
                 }else{
                     if(salida_obt.equals(Norte.getNombre()) || (salida_obt.equals(Rayo.getNombre()))){
                         uno.setText("No se baje en " + Peras.getNombre());
+                        Peras.setEn_ruta(true);
                         dos.setText("No se baje en " + LL.getNombre());
+                        LL.setEn_ruta(true);
                         tres.setText(cuatro.getText());
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
@@ -386,12 +408,16 @@ public class Ruta extends AppCompatActivity {
                         }
                         if(salida_obt.equals(Norte.getNombre())){
                             uno.setText("Bajese en " + Peras.getNombre() + "y coja la guagua numero 308");
+                            LL.setEn_ruta(false);
                         }
                     }else{
                         if(salida_obt.equals(Intercambiador_SC.getNombre())){
                             uno.setText("No se baje en " + Norte);
+                            Norte.setEn_ruta(true);
                             dos.setText("Bajese en " + Peras + " y coja la guagua numero 308");
+                            Peras.setEn_ruta(true);
                             tres.setText("No se baje en " + LL.getNombre());
+                            LL.setEn_ruta(true);
                             cuatro.setVisibility(View.VISIBLE);
                             tiempo.setText("1 hora");
                             numeroparadas.setText("4");
@@ -422,6 +448,7 @@ public class Ruta extends AppCompatActivity {
         }
         if(datos_obt.equals(Norte.getNombre())){
             tres.setText("Bajese en la parada Destino: " + datos_obt);
+            Norte.setEn_ruta(true);
             if(salida_obt.equals(Intercambiador_SC.getNombre()) || salida_obt.equals(Peras.getNombre())){
                 uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
@@ -435,6 +462,7 @@ public class Ruta extends AppCompatActivity {
             }else{
                 if(salida_obt.equals(Rayo.getNombre()) || (salida_obt.equals(LL.getNombre()))){
                     uno.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                    Peras.setEn_ruta(true);
                     dos.setText(tres.getText());
                     tres.setVisibility(View.GONE);
                     cuatro.setVisibility(View.GONE);
@@ -448,7 +476,9 @@ public class Ruta extends AppCompatActivity {
                 }else{
                     if(salida_obt.equals(Intercambiador_LL.getNombre())){
                         uno.setText("No se baje en la parada "+ LL.getNombre());
+                        LL.setEn_ruta(true);
                         dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                        Peras.setEn_ruta(true);
                         tres.setVisibility(View.VISIBLE);
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
@@ -471,6 +501,7 @@ public class Ruta extends AppCompatActivity {
         }
         if(datos_obt.equals(Intercambiador_SC.getNombre())){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
+            Intercambiador_SC.setEn_ruta(true);
             if(salida_obt.equals(Norte.getNombre())){
                 uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
@@ -481,6 +512,7 @@ public class Ruta extends AppCompatActivity {
             }else{
                 if(salida_obt.equals(Peras.getNombre())){
                     uno.setText("No se baje en la parada" + Norte.getNombre());
+                    Norte.setEn_ruta(true);
                     dos.setText(cuatro.getText());
                     cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
@@ -494,7 +526,9 @@ public class Ruta extends AppCompatActivity {
                 }else{
                     if(salida_obt.equals(Rayo.getNombre()) || (salida_obt.equals(LL.getNombre()))){
                         uno.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                        Peras.setEn_ruta(true);
                         dos.setText("No se baje en la parada " + Norte.getNombre());
+                        Norte.setEn_ruta(true);
                         tres.setText(cuatro.getText());
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("50 minutos");
@@ -513,8 +547,11 @@ public class Ruta extends AppCompatActivity {
                         }
                     }else{
                         uno.setText("No se baje en la parada" + LL.getNombre());
+                        LL.setEn_ruta(true);
                         dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                        Peras.setEn_ruta(true);
                         tres.setText("No se baje en la parada " + Norte.getNombre());
+                        Norte.setEn_ruta(true);
                         cuatro.setVisibility(View.VISIBLE);
                         tiempo.setText("1 hora");
                         numeroparadas.setText("4");

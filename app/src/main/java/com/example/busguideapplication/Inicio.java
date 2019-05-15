@@ -124,6 +124,12 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         foto_perfil=findViewById(R.id.foto_perfil);
         datos_obt= datos.getString("Google");
 
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setMessage("Si usted activa la vibración y pone sonido a su teléfono el móvil le avisará de todo, sin necesidad de estar usted pendiente");
+        builder.setNegativeButton(R.string.aceptar,null);
+        Dialog dialog=builder.create();
+        dialog.show();
+
         if(datos_obt.equals("0")) {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestEmail()
