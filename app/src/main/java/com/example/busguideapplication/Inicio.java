@@ -50,6 +50,12 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
     String datos_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
+    Dispositivo LL = new Dispositivo("FC:23:60:ED:0B:B7", "Calle La Laguna Nº1");
+    Dispositivo Intercambiador_LL = new Dispositivo("CC:F7:38:83:39:83", "Intercambiador La Laguna");
+    Dispositivo Peras= new Dispositivo("E2:C3:B1:E0:2D:8B", "Calle Las peras Nº7");
+    Dispositivo Rayo = new Dispositivo("E1:FF:56:62:7F:F3", "Dulceria el Rayo");
+    Dispositivo Norte = new Dispositivo("E3:10:F4:C0:4F:0E","Autopista Norte");
+    Dispositivo Intercambiador_SC = new Dispositivo("C7:9B:B3:C7:B0:88", "Intercambiador SC");
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
@@ -57,40 +63,39 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
-            Log.i(String.valueOf(getApplicationContext()),"Pos nah" + mDeviceList);
-            if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
+            if (mDeviceList.equals(LL.getDispositivo())) {
                 stopScanning();
-                inicializar="Calle La Laguna Nº1";
+                inicializar=LL.getNombre();
                 aux_no=1;
                 Alerta();
             }
-            if(mDeviceList.equals("CC:F7:38:83:39:83")){
+            if(mDeviceList.equals(Intercambiador_LL.getDispositivo())){
                 stopScanning();
-                inicializar="Intercambiador La Laguna";
+                inicializar=LL.getNombre();
                 aux_no=1;
                 Alerta();
             }
-            if(mDeviceList.equals("E2:C3:B1:E0:2D:8B")){
+            if(mDeviceList.equals(Peras.getDispositivo())){
                 stopScanning();
-                inicializar="Calle Las peras Nº7";
+                inicializar=Peras.getNombre();
                 aux_no=1;
                 Alerta();
             }
-            if(mDeviceList.equals("C7:9B:B3:C7:B0:88")){
+            if(mDeviceList.equals(Intercambiador_SC.getDispositivo())){
                 stopScanning();
-                inicializar="Intercambiador Santa Cruz";
+                inicializar=Intercambiador_SC.getNombre();
                 aux_no=1;
                 Alerta();
             }
-            if(mDeviceList.equals("E3:10:F4:C0:4F:0E")){
+            if(mDeviceList.equals(Norte.getDispositivo())){
                 stopScanning();
-                inicializar="Autopista Norte";
+                inicializar=Norte.getNombre();
                 aux_no=1;
                 Alerta();
             }
-            if(mDeviceList.equals("E1:FF:56:62:7F:F3")){
+            if(mDeviceList.equals(Rayo.getDispositivo())){
                 stopScanning();
-                inicializar="Dulceria el Rayo";
+                inicializar=Rayo.getNombre();
                 aux_no=1;
                 Alerta();
             }
@@ -283,6 +288,12 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                 }else{
                     Intent cambiar = new Intent(Inicio.this, Ruta.class);
                     stopScanning();
+                    cambiar.putExtra("Objeto_sc",Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL",Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll",LL);
+                    cambiar.putExtra("Objeto_rayo",Rayo);
+                    cambiar.putExtra("Objeto_peras",Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Salida", aux_salida);
                     cambiar.putExtra("Datos", aux);
                     cambiar.putExtra("Google",datos_obt);
@@ -313,6 +324,12 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                 aux_no=0;
                             } else {
                                 Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                                cambiar.putExtra("Objeto_sc",Intercambiador_SC);
+                                cambiar.putExtra("Objeto_IntLL",Intercambiador_LL);
+                                cambiar.putExtra("Objeto_ll",LL);
+                                cambiar.putExtra("Objeto_rayo",Rayo);
+                                cambiar.putExtra("Objeto_peras",Peras);
+                                cambiar.putExtra("Objeto_norte", Norte);
                                 cambiar.putExtra("Salida", inicializar);
                                 cambiar.putExtra("Datos", aux);
                                 cambiar.putExtra("Google", datos_obt);
@@ -347,6 +364,12 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                 Toast.LENGTH_SHORT).show();
                     }else{
                         Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                        cambiar.putExtra("Objeto_sc",Intercambiador_SC);
+                        cambiar.putExtra("Objeto_IntLL",Intercambiador_LL);
+                        cambiar.putExtra("Objeto_ll",LL);
+                        cambiar.putExtra("Objeto_rayo",Rayo);
+                        cambiar.putExtra("Objeto_peras",Peras);
+                        cambiar.putExtra("Objeto_norte", Norte);
                         cambiar.putExtra("Salida", aux_salida);
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google",datos_obt);
@@ -367,7 +390,14 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                         aux_no=0;
                     } else {
                         Intent cambiar = new Intent(Inicio.this, Ruta.class);
+                        cambiar.putExtra("Objeto",Intercambiador_SC);
                         cambiar.putExtra("Salida", inicializar);
+                        cambiar.putExtra("Objeto_sc",Intercambiador_SC);
+                        cambiar.putExtra("Objeto_IntLL",Intercambiador_LL);
+                        cambiar.putExtra("Objeto_ll",LL);
+                        cambiar.putExtra("Objeto_rayo",Rayo);
+                        cambiar.putExtra("Objeto_peras",Peras);
+                        cambiar.putExtra("Objeto_norte", Norte);
                         cambiar.putExtra("Datos", aux);
                         cambiar.putExtra("Google", datos_obt);
                         cambiar.putExtra("Check", "0");

@@ -21,6 +21,7 @@ public class Beacon extends AppCompatActivity {
     long tiempo;
     private Vibrator vibrator;
     String salida_obt, destino_obt,valor_obt,datos_obt,check_obt;
+    Dispositivo Intercambiador_SC, Intercambiador_LL,Rayo, Peras, LL, Norte;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,35 +38,46 @@ public class Beacon extends AppCompatActivity {
         valor_obt = valor.getString("Google");
         check=getIntent().getExtras();
         check_obt=check.getString("Check");
+        Intercambiador_SC = (Dispositivo)getIntent().getSerializableExtra("Objeto_sc");
+        Intercambiador_LL = (Dispositivo)getIntent().getSerializableExtra("Objeto_IntLL");
+        LL=(Dispositivo)getIntent().getSerializableExtra("Objeto_ll");
+        Peras=(Dispositivo)getIntent().getSerializableExtra("Objeto_peras");
+        Norte=(Dispositivo)getIntent().getSerializableExtra("Objeto_norte");
+        Rayo=(Dispositivo)getIntent().getSerializableExtra("Objeto_rayo");
 
         dates = findViewById(R.id.datos);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         mp=MediaPlayer.create(this, R.raw.sonido);
 
-        if(datos_obt.equals("FC:23:60:ED:0B:B7")) {
-            lugar="Calle La Laguna Nº1";
-            dates.setText("Calle La Laguna Nº1");
+        if(datos_obt.equals(LL.getDispositivo())) {
+            lugar=LL.getNombre();
+            dates.setText(LL.getNombre());
+            LL.setEncontrado(true);
         }
-        if(datos_obt.equals("E2:C3:B1:E0:2D:8B")){
-            lugar="Calle Las Peras Nº7";
-            dates.setText("Calle Las Peras Nº7");
+        if(datos_obt.equals(Peras.getDispositivo())) {
+            lugar=Peras.getNombre();
+            dates.setText(Peras.getNombre());
+            Peras.setEncontrado(true);
         }
-        if(datos_obt.equals("E1:FF:56:62:7F:F3")){
-            lugar="Dulceria el Rayo";
-            dates.setText("Calle Las Peras Nº7");
-            //dates.setText("Dulceria el Rayo");
+        if(datos_obt.equals(Rayo.getDispositivo())) {
+            lugar=Rayo.getNombre();
+            dates.setText(Rayo.getNombre());
+            Rayo.setEncontrado(true);
         }
-        if(datos_obt.equals("CC:F7:38:83:39:83")){
-            lugar="Intercambiador La Laguna";
-            dates.setText("Intercambiador La Laguna");
+        if(datos_obt.equals(Intercambiador_LL.getDispositivo())) {
+            lugar=Intercambiador_LL.getNombre();
+            dates.setText(Intercambiador_LL.getNombre());
+            Intercambiador_LL.setEncontrado(true);
         }
-        if(datos_obt.equals("E3:10:F4:C0:4F:0E")){
-            lugar="Autopista Norte";
-            dates.setText("Autopista Norte");
+        if(datos_obt.equals(Norte.getDispositivo())) {
+            lugar=Norte.getNombre();
+            dates.setText(Norte.getNombre());
+            Norte.setEncontrado(true);
         }
-        if(datos_obt.equals("C7:9B:B3:C7:B0:88")) {
-            lugar = "Intercambiador Santa Cruz";
-            dates.setText("Intercambiador Santa Cruz");
+        if(datos_obt.equals(Intercambiador_SC.getDispositivo())) {
+            lugar = Intercambiador_SC.getNombre();
+            dates.setText(Intercambiador_SC.getNombre());
+            Intercambiador_SC.setEncontrado(true);
         }
 
         parar = findViewById(R.id.parar);
@@ -94,6 +106,12 @@ public class Beacon extends AppCompatActivity {
             numero=Integer.parseInt(check_obt);
             numero=numero+1;
             numero_string=String.valueOf(numero);
+            vuelta.putExtra("Objeto_sc",Intercambiador_SC);
+            vuelta.putExtra("Objeto_IntLL",Intercambiador_LL);
+            vuelta.putExtra("Objeto_ll",LL);
+            vuelta.putExtra("Objeto_rayo",Rayo);
+            vuelta.putExtra("Objeto_peras",Peras);
+            vuelta.putExtra("Objeto_norte", Norte);
             vuelta.putExtra("Salida", salida_obt);
             vuelta.putExtra("Datos", destino_obt);
             vuelta.putExtra("Google",valor_obt);

@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.TextView;
 
@@ -29,78 +28,120 @@ public class Ruta extends AppCompatActivity {
     BluetoothManager btManager;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
+    Dispositivo Intercambiador_SC, Intercambiador_LL,LL,Rayo, Peras, Norte;
     Bundle datos, salida, valor, check;
     String datos_obt, salida_obt,valor_obt, check_obt;
-    String Dulceria="Dulceria el Rayo";
-    String LL="Intercambiador La Laguna";
-    String Norte = "Autopista Norte";
-    String Calle_LL="Calle La Laguna Nº1";
-    String Peras="Calle Las peras Nº7";
-    String SC="Intercambiador Santa Cruz";
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
-            Log.i(String.valueOf(getApplicationContext()),"Pos sehh" + mDeviceList);
-            if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Check",check_obt);
-                startActivity(cambiar);  ///PROBAR A PONERLO DESPUES DE LOS 4 IF
+            if (mDeviceList.equals(Intercambiador_SC.getDispositivo())) {
+                if(!Intercambiador_SC.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Objeto_sc",Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL",Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll",LL);
+                    cambiar.putExtra("Objeto_rayo",Rayo);
+                    cambiar.putExtra("Objeto_peras",Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
+                }
             }
-            if(mDeviceList.equals("E2:C3:B1:E0:2D:8B")){
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Check",check_obt);
-                startActivity(cambiar);
+            if(mDeviceList.equals(Peras.getDispositivo())){
+                if(!Peras.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Objeto_sc", Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL", Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll", LL);
+                    cambiar.putExtra("Objeto_rayo", Rayo);
+                    cambiar.putExtra("Objeto_peras", Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
+                }
             }
-            if(mDeviceList.equals("E1:FF:56:62:7F:F3")){
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Check",check_obt);
-                startActivity(cambiar);
+            if(mDeviceList.equals(Rayo.getDispositivo())){
+                if(!Rayo.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Objeto_sc", Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL", Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll", LL);
+                    cambiar.putExtra("Objeto_rayo", Rayo);
+                    cambiar.putExtra("Objeto_peras", Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
+                }
             }
-            if(mDeviceList.equals("E3:10:F4:C0:4F:0E")){
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Check",check_obt);
-                startActivity(cambiar);
+            if(mDeviceList.equals(Norte.getDispositivo())){
+                if(!Norte.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Objeto_sc", Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL", Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll", LL);
+                    cambiar.putExtra("Objeto_rayo", Rayo);
+                    cambiar.putExtra("Objeto_peras", Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
+                }
             }
-            if(mDeviceList.equals("CC:F7:38:83:39:83")){
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Check",check_obt);
-                startActivity(cambiar);
+            if(mDeviceList.equals(Intercambiador_LL.getDispositivo())){
+                if(!Intercambiador_LL.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Objeto_sc", Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL", Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll", LL);
+                    cambiar.putExtra("Objeto_rayo", Rayo);
+                    cambiar.putExtra("Objeto_peras", Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
+                }
             }
-            if (mDeviceList.equals("FC:23:60:ED:0B:B7")) {
-                Intent cambiar = new Intent(Ruta.this,Beacon.class);
-                stopScanning();
-                cambiar.putExtra("Datos",mDeviceList);
-                cambiar.putExtra("Destino",datos_obt);
-                cambiar.putExtra("Google",valor_obt);
-                cambiar.putExtra("Salida",salida_obt);
-                cambiar.putExtra("Check",check_obt);
+            if (mDeviceList.equals(LL.getDispositivo())) {
+                if(!LL.disp_enc()) {
+                    Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                    stopScanning();
+                    cambiar.putExtra("Datos", mDeviceList);
+                    cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("Objeto_sc", Intercambiador_SC);
+                    cambiar.putExtra("Objeto_IntLL", Intercambiador_LL);
+                    cambiar.putExtra("Objeto_ll", LL);
+                    cambiar.putExtra("Objeto_rayo", Rayo);
+                    cambiar.putExtra("Objeto_peras", Peras);
+                    cambiar.putExtra("Objeto_norte", Norte);
+                    cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("Check", check_obt);
+                }
             }
         }
 
@@ -132,8 +173,15 @@ public class Ruta extends AppCompatActivity {
         salida_obt=salida.getString("Salida");
         valor_obt = valor.getString("Google");
         check_obt = check.getString("Check");
+        Intercambiador_SC = (Dispositivo)getIntent().getSerializableExtra("Objeto_sc");
+        Intercambiador_LL = (Dispositivo)getIntent().getSerializableExtra("Objeto_IntLL");
+        LL = (Dispositivo)getIntent().getSerializableExtra("Objeto_ll");
+        Peras = (Dispositivo)getIntent().getSerializableExtra("Objeto_peras");
+        Rayo=(Dispositivo)getIntent().getSerializableExtra("Objeto_rayo");
+        Norte = (Dispositivo)getIntent().getSerializableExtra("Objeto_norte");
 
         buscar= findViewById(R.id.buscar);
+        stopScanning();
         startScanning();
 
         paradas = findViewById(R.id.paradas);
@@ -149,8 +197,8 @@ public class Ruta extends AppCompatActivity {
         cuatro=findViewById(R.id.Cuatro);
 
         lugar.setText(salida_obt + "-" + datos_obt);
-        if((salida_obt.equals(Peras) || salida_obt.equals(LL) || salida_obt.equals(Calle_LL))
-                && datos_obt.equals(Dulceria)){
+        if((salida_obt.equals(Peras.getNombre()) || salida_obt.equals(Intercambiador_LL.getNombre()) || salida_obt.equals(LL.getNombre()))
+                && datos_obt.equals(Rayo.getNombre())){
             uno.setText("No se baje en Calle La Laguna Nº1, continue hasta la siguiente parada");
             dos.setText("No se baje en Calle Las Peras, continue hasta la siguiente parada");
             tres.setText("Bajese en la parada Destino: " + datos_obt);
@@ -169,7 +217,7 @@ public class Ruta extends AppCompatActivity {
                     tiempo.setText("10 minutos");
                 }
             }
-            if(salida_obt.equals(Calle_LL)){
+            if(salida_obt.equals(LL.getNombre())){
                 numeroparadas.setText("2");
                 tiempo.setText("20 minutos");
                 uno.setText(dos.getText());
@@ -188,7 +236,7 @@ public class Ruta extends AppCompatActivity {
                 tres.setVisibility(View.GONE);
             }
         }else{
-            if(((salida_obt.equals(SC) || (salida_obt.equals(Norte))) && datos_obt.equals(Dulceria))){
+            if(((salida_obt.equals(Intercambiador_SC.getNombre()) || (salida_obt.equals(Norte.getNombre()))) && datos_obt.equals(Rayo.getNombre()))){
                 uno.setText("No se baje en Autopista Norte, continue hasta la siguiente parada");
                 dos.setText("Baje en Calle Las Peras, y coja la guagua número 8");
                 tres.setText("Bajese en la parada Destino: " + datos_obt);
@@ -208,7 +256,7 @@ public class Ruta extends AppCompatActivity {
                         tiempo.setText("10 minutos");
                     }
                 }
-                if(salida_obt.equals(Norte)){
+                if(salida_obt.equals(Norte.getNombre())){
                     numeroparadas.setText("2");
                     tiempo.setText("20 minutos");
                     uno.setText(dos.getText());
@@ -222,17 +270,17 @@ public class Ruta extends AppCompatActivity {
                 }
             }
         }
-        if(datos_obt.equals(Calle_LL)){
+        if(datos_obt.equals(LL.getNombre())){
             tres.setText("Bajese en la parada Destino: " + datos_obt);
             cuatro.setVisibility(View.GONE);
-            if(salida_obt.equals(LL) || salida_obt.equals(Dulceria)){
+            if(salida_obt.equals(LL) || salida_obt.equals(Rayo.getNombre())){
                 uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
                 numeroparadas.setText("1");
                 tiempo.setText("10 minutos");
             }else{
-                if(salida_obt.equals(SC) || salida_obt.equals(Norte)){
+                if(salida_obt.equals(Intercambiador_SC.getNombre()) || salida_obt.equals(Norte.getNombre())){
                     uno.setText("No se baje en Autopista Norte.");
                     dos.setText("Bajese en calle Las Peras Nº7 y coja la guagua 305");
                     tres.setVisibility(View.VISIBLE);
@@ -250,7 +298,7 @@ public class Ruta extends AppCompatActivity {
                             tiempo.setText("10 minutos");
                         }
                     }
-                    if(salida_obt.equals(Norte)){
+                    if(salida_obt.equals(Norte.getNombre())){
                         uno.setText(dos.getText());
                         dos.setText(tres.getText());
                         tres.setVisibility(View.GONE);
@@ -265,17 +313,17 @@ public class Ruta extends AppCompatActivity {
                 }
             }
         }
-        if(datos_obt.equals(Peras)){
+        if(datos_obt.equals(Peras.getNombre())){
             dos.setText("Bajese en la parada Destino: " + datos_obt);
             tres.setVisibility(View.GONE);
             cuatro.setVisibility(View.GONE);
-            if(salida_obt.equals(Dulceria) || salida_obt.equals(Calle_LL) || salida_obt.equals(Norte)){
+            if(salida_obt.equals(Rayo.getNombre()) || salida_obt.equals(LL.getNombre()) || salida_obt.equals(Norte.getNombre())){
                 uno.setText(dos.getText());
                 dos.setVisibility(View.GONE);
                 tiempo.setText("10 minutos");
                 numeroparadas.setText("1");
             }else{
-                uno.setText("No se baje en " + Norte);
+                uno.setText("No se baje en " + Norte.getNombre()    );
                 tiempo.setText("40 minutos");
                 numeroparadas.setText("2");
                 if(check_obt.equals("1")){
@@ -283,9 +331,9 @@ public class Ruta extends AppCompatActivity {
                     numeroparadas.setText("1");
                     tiempo.setText("10 minutos");
                 }
-                if(salida_obt.equals(LL)){
+                if(salida_obt.equals(Intercambiador_LL.getNombre())){
                     tiempo.setText("20 minutos");
-                    uno.setText("No se baje en " + Calle_LL);
+                    uno.setText("No se baje en " + LL.getNombre());
                     if(check_obt.equals("1")){
                         uno.setChecked(true);
                         numeroparadas.setText("1");
@@ -294,9 +342,9 @@ public class Ruta extends AppCompatActivity {
                 }
             }
         }
-        if(datos_obt.equals(LL)){
+        if(datos_obt.equals(Intercambiador_LL.getNombre())){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
-            if(salida_obt.equals(Calle_LL)){
+            if(salida_obt.equals(LL.getNombre())){
                 uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
                 cuatro.setVisibility(View.GONE);
@@ -304,8 +352,8 @@ public class Ruta extends AppCompatActivity {
                 tiempo.setText("10 minutos");
                 numeroparadas.setText("1");
             }else{
-                if(salida_obt.equals(Peras)){
-                    uno.setText("No se baje en " + Calle_LL);
+                if(salida_obt.equals(Peras.getNombre())){
+                    uno.setText("No se baje en " + LL.getNombre());
                     dos.setText(cuatro.getText());
                     cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
@@ -317,9 +365,9 @@ public class Ruta extends AppCompatActivity {
                         tiempo.setText("10 minutos");
                     }
                 }else{
-                    if(salida_obt.equals(Norte) || (salida_obt.equals(Dulceria))){
-                        uno.setText("No se baje en " + Peras);
-                        dos.setText("No se baje en " + Calle_LL);
+                    if(salida_obt.equals(Norte.getNombre()) || (salida_obt.equals(Rayo.getNombre()))){
+                        uno.setText("No se baje en " + Peras.getNombre());
+                        dos.setText("No se baje en " + LL.getNombre());
                         tres.setText(cuatro.getText());
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
@@ -336,14 +384,14 @@ public class Ruta extends AppCompatActivity {
                                 tiempo.setText("10 minutos");
                             }
                         }
-                        if(salida_obt.equals(Norte)){
-                            uno.setText("Bajese en " + Peras + "y coja la guagua numero 308");
+                        if(salida_obt.equals(Norte.getNombre())){
+                            uno.setText("Bajese en " + Peras.getNombre() + "y coja la guagua numero 308");
                         }
                     }else{
-                        if(salida_obt.equals(SC)){
+                        if(salida_obt.equals(Intercambiador_SC.getNombre())){
                             uno.setText("No se baje en " + Norte);
                             dos.setText("Bajese en " + Peras + " y coja la guagua numero 308");
-                            tres.setText("No se baje en " + Calle_LL);
+                            tres.setText("No se baje en " + LL.getNombre());
                             cuatro.setVisibility(View.VISIBLE);
                             tiempo.setText("1 hora");
                             numeroparadas.setText("4");
@@ -372,9 +420,9 @@ public class Ruta extends AppCompatActivity {
                 }
             }
         }
-        if(datos_obt.equals(Norte)){
+        if(datos_obt.equals(Norte.getNombre())){
             tres.setText("Bajese en la parada Destino: " + datos_obt);
-            if(salida_obt.equals(SC) || salida_obt.equals(Peras)){
+            if(salida_obt.equals(Intercambiador_SC.getNombre()) || salida_obt.equals(Peras.getNombre())){
                 uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
@@ -385,8 +433,8 @@ public class Ruta extends AppCompatActivity {
                     tiempo.setText("10 minutos");
                 }
             }else{
-                if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
-                    uno.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
+                if(salida_obt.equals(Rayo.getNombre()) || (salida_obt.equals(LL.getNombre()))){
+                    uno.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
                     dos.setText(tres.getText());
                     tres.setVisibility(View.GONE);
                     cuatro.setVisibility(View.GONE);
@@ -398,9 +446,9 @@ public class Ruta extends AppCompatActivity {
                         tiempo.setText("10 minutos");
                     }
                 }else{
-                    if(salida_obt.equals(LL)){
-                        uno.setText("No se baje en la parada "+ Calle_LL);
-                        dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
+                    if(salida_obt.equals(Intercambiador_LL.getNombre())){
+                        uno.setText("No se baje en la parada "+ LL.getNombre());
+                        dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
                         tres.setVisibility(View.VISIBLE);
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("30 minutos");
@@ -421,9 +469,9 @@ public class Ruta extends AppCompatActivity {
                 }
             }
         }
-        if(datos_obt.equals(SC)){
+        if(datos_obt.equals(Intercambiador_SC.getNombre())){
             cuatro.setText("Bajese en la parada Destino: " + datos_obt);
-            if(salida_obt.equals(Norte)){
+            if(salida_obt.equals(Norte.getNombre())){
                 uno.setText(cuatro.getText());
                 dos.setVisibility(View.GONE);
                 cuatro.setVisibility(View.GONE);
@@ -431,8 +479,8 @@ public class Ruta extends AppCompatActivity {
                 tiempo.setText("30 minutos");
                 numeroparadas.setText("1");
             }else{
-                if(salida_obt.equals(Peras)){
-                    uno.setText("No se baje en la parada" + Norte);
+                if(salida_obt.equals(Peras.getNombre())){
+                    uno.setText("No se baje en la parada" + Norte.getNombre());
                     dos.setText(cuatro.getText());
                     cuatro.setVisibility(View.GONE);
                     tres.setVisibility(View.GONE);
@@ -444,9 +492,9 @@ public class Ruta extends AppCompatActivity {
                         tiempo.setText("10 minutos");
                     }
                 }else{
-                    if(salida_obt.equals(Dulceria) || (salida_obt.equals(Calle_LL))){
-                        uno.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
-                        dos.setText("No se baje en la parada " + Norte);
+                    if(salida_obt.equals(Rayo.getNombre()) || (salida_obt.equals(LL.getNombre()))){
+                        uno.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                        dos.setText("No se baje en la parada " + Norte.getNombre());
                         tres.setText(cuatro.getText());
                         cuatro.setVisibility(View.GONE);
                         tiempo.setText("50 minutos");
@@ -464,9 +512,9 @@ public class Ruta extends AppCompatActivity {
                             }
                         }
                     }else{
-                        uno.setText("No se baje en la parada" + Calle_LL);
-                        dos.setText("Bajese en la parada " + Peras + " y coja la guagua 18");
-                        tres.setText("No se baje en la parada " + Norte);
+                        uno.setText("No se baje en la parada" + LL.getNombre());
+                        dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                        tres.setText("No se baje en la parada " + Norte.getNombre());
                         cuatro.setVisibility(View.VISIBLE);
                         tiempo.setText("1 hora");
                         numeroparadas.setText("4");

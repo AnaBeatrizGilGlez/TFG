@@ -1,6 +1,7 @@
 package com.example.busguideapplication;
 
 import android.app.Dialog;
+import android.app.Notification;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -66,11 +67,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Registrar (View view){
-        startActivity(new Intent(MainActivity.this,Registro.class));
+        Intent objeto = new Intent(MainActivity.this,Registro.class);
+        startActivity(objeto);
     }
 
     public void Iniciar_Sesion(View view){
-        startActivity(new Intent(MainActivity.this,Iniciar.class));
+        Intent objeto = new Intent(MainActivity.this,Iniciar.class);
+        startActivity(objeto);
     }
 
     public void Conexion(View view){
