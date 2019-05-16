@@ -7,11 +7,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class Fin extends AppCompatActivity {
     Button Okey;
     Bundle lugar;
-    EditText Mision;
+    TextView Mision;
     Bundle valor;
     String valor_obt;
 
@@ -27,7 +28,7 @@ public class Fin extends AppCompatActivity {
         lugar = getIntent().getExtras();
         String mision_obt= lugar.getString("Cumplida");
 
-        Mision.setText("Usted ya ha llegado a su destino " + mision_obt + " Esperemos que tenga un buen día.");
+        Mision.setText(Mision.getText() + mision_obt + " Esperemos que tenga un buen día.");
     }
 
     public void Aceptar(View view){

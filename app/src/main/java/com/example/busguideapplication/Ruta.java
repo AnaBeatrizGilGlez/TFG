@@ -36,6 +36,7 @@ public class Ruta extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
+            Log.i(String.valueOf(getApplicationContext()), "Inicio " + mDeviceList);
             if (mDeviceList.equals(Intercambiador_SC.getDispositivo())) {
                 if(!(Intercambiador_SC.disp_enc()) && Intercambiador_SC.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
@@ -131,7 +132,7 @@ public class Ruta extends AppCompatActivity {
                     startActivity(cambiar);
                 }
             }
-            if (mDeviceList.equals(LL.getDispositivo())) {
+            if(mDeviceList.equals(LL.getDispositivo())){
                 if(!(LL.disp_enc()) && LL.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
                     stopScanning();
@@ -144,9 +145,10 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Objeto_peras", Peras);
                     cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Google", valor_obt);
-                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check", check_obt);
+                    startActivity(cambiar);
                 }
             }
         }

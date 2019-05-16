@@ -57,6 +57,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
+            Log.i(String.valueOf(getApplicationContext()), "Inicio " + mDeviceList);
             if (mDeviceList.equals(LL.getDispositivo())) {
                 stopScanning();
                 inicializar=LL.getNombre();
@@ -65,7 +66,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
             }
             if(mDeviceList.equals(Intercambiador_LL.getDispositivo())){
                 stopScanning();
-                inicializar=LL.getNombre();
+                inicializar=Intercambiador_LL.getNombre();
                 aux_no=1;
                 Alerta();
             }
@@ -97,11 +98,13 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
 
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
+            Log.i(String.valueOf(getApplicationContext()), "Inicionesee " );
             super.onBatchScanResults(results);
         }
 
         @Override
         public void onScanFailed(int errorCode) {
+            Log.i(String.valueOf(getApplicationContext()), "Inicione " + errorCode);
             super.onScanFailed(errorCode);
         }
     };
@@ -229,15 +232,17 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
     private void goLogInscreen(){
         Intent intent = new Intent(this,MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        finish();
         startActivity(intent);
     }
 
     public void startScanning() {
         System.out.println("start scanning");
+        Log.i(String.valueOf(getApplicationContext()), "Inicio");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                btScanner.startScan(leScanCallback);
+                Log.i(String.valueOf(getApplicationContext()), "Iniciote "); btScanner.startScan(leScanCallback);
             }
         });
     }
@@ -255,6 +260,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         if(datos_obt.equals("1")){
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getApplicationContext(), "Sesion cerrada", Toast.LENGTH_LONG).show();
+            finish();
             startActivity(new Intent(Inicio.this, MainActivity.class));
         }else{
             firebaseAuth.signOut();
@@ -275,6 +281,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         finish();
         Intent otro=new Intent(Inicio.this,Configuracion.class);
         otro.putExtra("dialog","0");
+        finish();
         startActivity(otro);
     }
 

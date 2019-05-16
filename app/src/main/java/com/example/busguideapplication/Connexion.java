@@ -79,6 +79,7 @@ public class Connexion extends AppCompatActivity {
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
+
     }
 
     public void startScanning() {

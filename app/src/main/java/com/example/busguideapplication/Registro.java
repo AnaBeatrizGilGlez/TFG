@@ -41,7 +41,6 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         setContentView(R.layout.registro);
 
         mail= findViewById(R.id.mail);
-        boxi = findViewById(R.id.checki);
         Contraseña= findViewById(R.id.Contraseña);
         Repetir= findViewById(R.id.Repetir);
 
