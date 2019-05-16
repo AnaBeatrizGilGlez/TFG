@@ -33,6 +33,7 @@ public class Fin extends AppCompatActivity {
     public void Aceptar(View view){
         Intent cambiar=new Intent(Fin.this,Inicio.class);
         cambiar.putExtra("Google",valor_obt);
+        cambiar.putExtra("dialog","0");
         startActivity(cambiar);
     }
 }

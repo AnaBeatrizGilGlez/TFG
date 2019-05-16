@@ -27,12 +27,22 @@ public class Iniciar extends AppCompatActivity {
         mail = findViewById(R.id.mail);
         Contraseña = findViewById(R.id.Contraseña);
 
-        mAuthListener= new FirebaseAuth.AuthStateListener() {
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user=firebaseAuth.getCurrentUser();
+                FirebaseUser user= firebaseAuth.getCurrentUser();
+                if(user!=null){
+                    goMainScreen();
+                }
             }
         };
+    }
+
+    private void goMainScreen(){
+        Intent intent = new Intent(this,Inicio.class);
+        intent.putExtra("Google", "1");
+        intent.putExtra("dialog","1");
+        startActivity(intent);
     }
 
     public void iniciar(View view){
@@ -55,6 +65,7 @@ public class Iniciar extends AppCompatActivity {
                     Toast.makeText(Iniciar.this, "Usuario entrando", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(Iniciar.this,Inicio.class);
                     intent.putExtra("Google","1");
+                    intent.putExtra("dialog","1");
                     startActivity(intent);
                 }else{
                     Toast.makeText(Iniciar.this, "Usuario o contraseña incorrecto", Toast.LENGTH_LONG).show();

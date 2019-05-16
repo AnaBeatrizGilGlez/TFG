@@ -1,6 +1,7 @@
 package com.example.busguideapplication;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -45,7 +46,6 @@ public class Configuracion extends AppCompatActivity {
                 if(name!=null){
                     Nombre.setText(name);
                 }
-
                 if(photoUrl!=null){
                     camarafotos.setImageURI(photoUrl);
                 }
@@ -62,6 +62,7 @@ public class Configuracion extends AppCompatActivity {
     public void Salir(View view){
         Intent intent=new Intent(Configuracion.this,Inicio.class);
         intent.putExtra("Google","1");
+        intent.putExtra("dialog","0");
         finish();
         startActivity(intent);
     }
@@ -83,12 +84,14 @@ public class Configuracion extends AppCompatActivity {
             }else {
                 user.updatePassword(contraseña_nueva);
                 Intent intent=new Intent(Configuracion.this,Inicio.class);
+                intent.putExtra("dialog","0");
                 intent.putExtra("Google","1");
                 finish();
                 startActivity(intent);
             }
         }else{
             Intent intent=new Intent(Configuracion.this,Inicio.class);
+            intent.putExtra("dialog","0");
             intent.putExtra("Google","1");
             finish();
             startActivity(intent);
@@ -96,6 +99,7 @@ public class Configuracion extends AppCompatActivity {
 
         if(aux.equals("1")){
             Intent intent=new Intent(Configuracion.this,Inicio.class);
+            intent.putExtra("dialog","0");
             intent.putExtra("Google","1");
             finish();
             startActivity(intent);

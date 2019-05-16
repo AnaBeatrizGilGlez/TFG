@@ -98,6 +98,7 @@ public class Beacon extends AppCompatActivity {
             Intent llegar=new Intent(Beacon.this, Fin.class);
             llegar.putExtra("Cumplida",lugar);
             llegar.putExtra("Google",valor_obt);
+            llegar.putExtra("dialog","0");
             mp.stop();
             finish();
             startActivity(llegar);
@@ -124,6 +125,7 @@ public class Beacon extends AppCompatActivity {
     public void Cambiar_Ruta(View view){
         Intent cambiar = new Intent(Beacon.this,Inicio.class);
         cambiar.putExtra("Google",valor_obt);
+        cambiar.putExtra("dialog","0");
         finish();
         startActivity(cambiar);
     }

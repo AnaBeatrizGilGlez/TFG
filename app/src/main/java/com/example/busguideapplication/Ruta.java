@@ -50,6 +50,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Destino", datos_obt);
                     cambiar.putExtra("Salida", salida_obt);
                     cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check", check_obt);
                     startActivity(cambiar);
                 }
@@ -68,6 +69,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Destino", datos_obt);
                     cambiar.putExtra("Salida", salida_obt);
                     cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check", check_obt);
                     startActivity(cambiar);
                 }
@@ -85,6 +87,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Google", valor_obt);
                     cambiar.putExtra("Destino", datos_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Salida", salida_obt);
                     cambiar.putExtra("Check", check_obt);
                     startActivity(cambiar);
@@ -104,6 +107,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Google", valor_obt);
                     cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check", check_obt);
                     startActivity(cambiar);
                 }
@@ -122,6 +126,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Google", valor_obt);
                     cambiar.putExtra("Salida", salida_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check", check_obt);
                     startActivity(cambiar);
                 }
@@ -139,6 +144,7 @@ public class Ruta extends AppCompatActivity {
                     cambiar.putExtra("Objeto_peras", Peras);
                     cambiar.putExtra("Objeto_norte", Norte);
                     cambiar.putExtra("Google", valor_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Salida", salida_obt);
                     cambiar.putExtra("Check", check_obt);
                 }
@@ -283,7 +289,7 @@ public class Ruta extends AppCompatActivity {
             tres.setText("Bajese en la parada Destino: " + datos_obt);
             LL.setEn_ruta(true);
             cuatro.setVisibility(View.GONE);
-            if(salida_obt.equals(LL) || salida_obt.equals(Rayo.getNombre())){
+            if(salida_obt.equals(Intercambiador_LL.getNombre()) || salida_obt.equals(Rayo.getNombre()) || salida_obt.equals(LL.getNombre())){
                 uno.setText(tres.getText());
                 dos.setVisibility(View.GONE);
                 tres.setVisibility(View.GONE);
@@ -407,14 +413,14 @@ public class Ruta extends AppCompatActivity {
                             }
                         }
                         if(salida_obt.equals(Norte.getNombre())){
-                            uno.setText("Bajese en " + Peras.getNombre() + "y coja la guagua numero 308");
+                            uno.setText("Bajese en " + Peras.getNombre() + " y coja la guagua numero 308");
                             LL.setEn_ruta(false);
                         }
                     }else{
                         if(salida_obt.equals(Intercambiador_SC.getNombre())){
-                            uno.setText("No se baje en " + Norte);
+                            uno.setText("No se baje en " + Norte.getNombre());
                             Norte.setEn_ruta(true);
-                            dos.setText("Bajese en " + Peras + " y coja la guagua numero 308");
+                            dos.setText("Bajese en " + Peras.getNombre() + " y coja la guagua numero 308");
                             Peras.setEn_ruta(true);
                             tres.setText("No se baje en " + LL.getNombre());
                             LL.setEn_ruta(true);
@@ -511,7 +517,7 @@ public class Ruta extends AppCompatActivity {
                 numeroparadas.setText("1");
             }else{
                 if(salida_obt.equals(Peras.getNombre())){
-                    uno.setText("No se baje en la parada" + Norte.getNombre());
+                    uno.setText("No se baje en la parada " + Norte.getNombre());
                     Norte.setEn_ruta(true);
                     dos.setText(cuatro.getText());
                     cuatro.setVisibility(View.GONE);
@@ -546,32 +552,34 @@ public class Ruta extends AppCompatActivity {
                             }
                         }
                     }else{
-                        uno.setText("No se baje en la parada" + LL.getNombre());
-                        LL.setEn_ruta(true);
-                        dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
-                        Peras.setEn_ruta(true);
-                        tres.setText("No se baje en la parada " + Norte.getNombre());
-                        Norte.setEn_ruta(true);
-                        cuatro.setVisibility(View.VISIBLE);
-                        tiempo.setText("1 hora");
-                        numeroparadas.setText("4");
-                        if(check_obt.equals("1")){
-                            uno.setChecked(true);
-                            numeroparadas.setText("3");
-                            tiempo.setText("30 minutos");
-                        }else{
-                            if(check_obt.equals("2")){
+                        if(salida_obt.equals(Intercambiador_LL.getNombre())) {
+                            uno.setText("No se baje en la parada" + LL.getNombre());
+                            LL.setEn_ruta(true);
+                            dos.setText("Bajese en la parada " + Peras.getNombre() + " y coja la guagua 18");
+                            Peras.setEn_ruta(true);
+                            tres.setText("No se baje en la parada " + Norte.getNombre());
+                            Norte.setEn_ruta(true);
+                            cuatro.setVisibility(View.VISIBLE);
+                            tiempo.setText("1 hora");
+                            numeroparadas.setText("4");
+                            if (check_obt.equals("1")) {
                                 uno.setChecked(true);
-                                dos.setChecked(true);
-                                numeroparadas.setText("2");
-                                tiempo.setText("20 minutos");
-                            }else{
-                                if(check_obt.equals("3")){
+                                numeroparadas.setText("3");
+                                tiempo.setText("30 minutos");
+                            } else {
+                                if (check_obt.equals("2")) {
                                     uno.setChecked(true);
                                     dos.setChecked(true);
-                                    tres.setChecked(true);
-                                    numeroparadas.setText("1");
-                                    tiempo.setText("10 minutos");
+                                    numeroparadas.setText("2");
+                                    tiempo.setText("20 minutos");
+                                } else {
+                                    if (check_obt.equals("3")) {
+                                        uno.setChecked(true);
+                                        dos.setChecked(true);
+                                        tres.setChecked(true);
+                                        numeroparadas.setText("1");
+                                        tiempo.setText("10 minutos");
+                                    }
                                 }
                             }
                         }
@@ -604,6 +612,7 @@ public class Ruta extends AppCompatActivity {
     public void Cancelar_Ruta (View view){
         Intent cambiar= new Intent(Ruta.this,Inicio.class);
         cambiar.putExtra("Google", valor_obt);
+        cambiar.putExtra("dialog","0");
         finish();
         startActivity(cambiar);
     }

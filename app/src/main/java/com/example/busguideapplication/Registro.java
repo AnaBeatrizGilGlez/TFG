@@ -1,6 +1,7 @@
 package com.example.busguideapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,8 +30,10 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
     private EditText mail, Contraseña, Repetir;
     private GoogleApiClient googleApiClient;
     Integer aux=0;
+    Integer aux_2=1;
     private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener firebaseauthlistener;
+    CheckBox boxi;
+    FirebaseAuth.AuthStateListener firebaseauthlistener;
 
     @Override
     protected void onCreate (Bundle savedInstanceState){
@@ -40,6 +41,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         setContentView(R.layout.registro);
 
         mail= findViewById(R.id.mail);
+        boxi = findViewById(R.id.checki);
         Contraseña= findViewById(R.id.Contraseña);
         Repetir= findViewById(R.id.Repetir);
 
@@ -69,6 +71,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                aux_2=0;
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
                 startActivityForResult(intent,777);
             }
@@ -123,6 +126,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         });
 
         if(aux==1) {
+            aux_2=1;
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -130,6 +134,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
                         Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
                         Intent intent =new Intent(Registro.this,Inicio.class);
                         intent.putExtra("Google","1");
+                        intent.putExtra("dialog","1");
                         startActivity(intent);
                     }
                 }
@@ -153,7 +158,6 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
     protected void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
-            //goMainScreen();
             firebaseAuthWithGoogle(result.getSignInAccount());
         }else{
             Toast.makeText(this, "No es posible entrar con ese correo", Toast.LENGTH_SHORT).show();
@@ -174,8 +178,14 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
 
     private void goMainScreen(){
         Intent intent = new Intent(this,Inicio.class);
-        intent.putExtra("Google","0");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(aux_2==0) {
+            intent.putExtra("Google", "0");
+            intent.putExtra("dialog","1");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }else{
+            intent.putExtra("Google","1");
+            intent.putExtra("dialog","1");
+        }
         startActivity(intent);
     }
 

@@ -2,7 +2,6 @@ package com.example.busguideapplication;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -18,12 +17,9 @@ import android.view.View;
 import android.widget.*;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,22 +28,20 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "Inicio" ;
     BluetoothManager btManager;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     Spinner combolugares,salida_personas;
     Button buscar;
     TextView nombre_perfil;
     private GoogleApiClient googleApiClient;
-    ImageView imagen,foto_perfil;
+    ImageView confi,foto_perfil;
     String aux,aux_salida;
     Integer aux_no=0;
     private String mDeviceList=null;
     String inicializar="null";
-    Bundle datos;
-    String datos_obt;
+    Bundle datos,dialog;
+    String datos_obt,dialog_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
     Dispositivo LL = new Dispositivo("FC:23:60:ED:0B:B7", "Calle La Laguna Nº1");
@@ -55,7 +49,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
     Dispositivo Peras= new Dispositivo("E2:C3:B1:E0:2D:8B", "Calle Las peras Nº7");
     Dispositivo Rayo = new Dispositivo("E1:FF:56:62:7F:F3", "Dulceria el Rayo");
     Dispositivo Norte = new Dispositivo("E3:10:F4:C0:4F:0E","Autopista Norte");
-    Dispositivo Intercambiador_SC = new Dispositivo("C7:9B:B3:C7:B0:88", "Intercambiador SC");
+    Dispositivo Intercambiador_SC = new Dispositivo("C7:9B:B3:C7:B0:88", "Intercambiador Santa Cruz");
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
@@ -121,14 +115,18 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
         btScanner = btAdapter.getBluetoothLeScanner();
 
         datos = getIntent().getExtras();
+        dialog = getIntent().getExtras();
         foto_perfil=findViewById(R.id.foto_perfil);
         datos_obt= datos.getString("Google");
+        dialog_obt=dialog.getString("dialog");
 
-        AlertDialog.Builder builder= new AlertDialog.Builder(this);
-        builder.setMessage("Si usted activa la vibración y pone sonido a su teléfono el móvil le avisará de todo, sin necesidad de estar usted pendiente");
-        builder.setNegativeButton(R.string.aceptar,null);
-        Dialog dialog=builder.create();
-        dialog.show();
+        if(dialog_obt.equals("1")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Si usted activa la vibración y pone sonido a su teléfono el móvil le avisará de todo, sin necesidad de estar usted pendiente");
+            builder.setNegativeButton(R.string.aceptar, null);
+            Dialog dialog = builder.create();
+            dialog.show();
+        }
 
         if(datos_obt.equals("0")) {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -139,24 +137,24 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                     .enableAutoManage(this,this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
-
-            firebaseAuth = FirebaseAuth.getInstance();
-            firebaseAuthListener= new FirebaseAuth.AuthStateListener() {
-                @Override
-                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if(user!=null){
-                        setUserData(user);
-                    }else{
-                        goLogInscreen();
-                    }
-                }
-            };
         }
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuthListener= new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user!=null){
+                    setUserData(user);
+                }else{
+                    goLogInscreen();
+                }
+            }
+        };
 
         combolugares= findViewById(R.id.spinnerlugares);
         salida_personas=findViewById(R.id.salida_persona);
-        imagen = findViewById(R.id.imagen);
+        confi = findViewById(R.id.confi);
         buscar=findViewById(R.id.buscar);
         start=findViewById(R.id.Start);
         nombre_perfil=findViewById(R.id.nombre_perfil);
@@ -170,7 +168,6 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                 }else{
                     nombre_perfil.setText("Bienvenido/a " + user.getEmail());
                 }
-                imagen.setVisibility(View.VISIBLE);
                 if(!(user.getPhotoUrl() ==null)){
                     foto_perfil.setImageURI(user.getPhotoUrl());
                     foto_perfil.setVisibility(View.VISIBLE);
@@ -178,6 +175,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                     foto_perfil.setVisibility(View.GONE);
                 }
             } else {
+                confi.setVisibility(View.GONE);
                 setUserData(user);
             }
         }
@@ -209,14 +207,13 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
     }
 
     private void setUserData(FirebaseUser user){
-        nombre_perfil.setText("Bienvenido/a " + user.getEmail());
+        nombre_perfil.setText("Bienvenido/a " + user.getDisplayName());
         Glide.with(this).load(user.getPhotoUrl()).into(foto_perfil);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-
         firebaseAuth.addAuthStateListener(firebaseAuthListener);
     }
 
@@ -276,7 +273,9 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
 
     public void Configurar(View view){
         finish();
-        startActivity(new Intent(Inicio.this,Configuracion.class));
+        Intent otro=new Intent(Inicio.this,Configuracion.class);
+        otro.putExtra("dialog","0");
+        startActivity(otro);
     }
 
     public void funcion_normal(){
@@ -303,6 +302,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                     cambiar.putExtra("Salida", aux_salida);
                     cambiar.putExtra("Datos", aux);
                     cambiar.putExtra("Google",datos_obt);
+                    cambiar.putExtra("dialog","0");
                     cambiar.putExtra("Check","0");
                     finish();
                     startActivity(cambiar);
@@ -378,6 +378,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                         cambiar.putExtra("Objeto_norte", Norte);
                         cambiar.putExtra("Salida", aux_salida);
                         cambiar.putExtra("Datos", aux);
+                        Log.i(String.valueOf(Inicio.this),aux);
                         cambiar.putExtra("Google",datos_obt);
                         cambiar.putExtra("Check","0");
                         finish();
