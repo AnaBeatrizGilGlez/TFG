@@ -36,7 +36,6 @@ public class Ruta extends AppCompatActivity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             mDeviceList=result.getDevice().getAddress();
-            Log.i(String.valueOf(getApplicationContext()), "Inicio " + mDeviceList);
             if (mDeviceList.equals(Intercambiador_SC.getDispositivo())) {
                 if(!(Intercambiador_SC.disp_enc()) && Intercambiador_SC.isEn_ruta()) {
                     Intent cambiar = new Intent(Ruta.this, Beacon.class);
