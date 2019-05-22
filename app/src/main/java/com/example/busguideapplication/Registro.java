@@ -131,7 +131,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         Toast.makeText(Registro.this, "Usuario registrado", Toast.LENGTH_LONG).show();
-                        Intent intent =new Intent(Registro.this,Inicio.class);
+                        Intent intent =new Intent(Registro.this,Inicio_2.class);
                         intent.putExtra("Google","1");
                         intent.putExtra("dialog","1");
                         startActivity(intent);
@@ -176,7 +176,7 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
     }
 
     private void goMainScreen(){
-        Intent intent = new Intent(this,Inicio.class);
+        Intent intent = new Intent(this,Inicio_2.class);
         if(aux_2==0) {
             intent.putExtra("Google", "0");
             intent.putExtra("dialog","1");
