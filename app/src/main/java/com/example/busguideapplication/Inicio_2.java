@@ -77,8 +77,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                         for (int i = 0; i < direcciones.size(); i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
                                 stopScanning();
-                                inicializar = nombre_direcciones.get(i);
-                                mDatabase.child("Dispositivos").child("inicializar").setValue(inicializar);
+                                mDatabase.child("Dispositivos").child("inicializar").setValue(nombre_direcciones.get(i));
                                 mDatabase.child("Dispositivos").child("aux_no").setValue("1");
 
                                 if(!isFinishing()) {
@@ -167,9 +166,9 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         mFirebasedata = FirebaseDatabase.getInstance();
         mDatabase = mFirebasedata.getReference();
         mDatabase.child("Dispositivos").child("aux_no").setValue("0");
-        mDatabase.child("inicializar").setValue("nothing");
-        mDatabase.child("Destino").setValue("Seleccione lugar");
-        mDatabase.child("Salida").setValue("Seleccione lugar");
+        mDatabase.child("Dispositivos").child("inicializar").setValue("nothing");
+        mDatabase.child("Dispositivos").child("Destino").setValue("Seleccione lugar");
+        mDatabase.child("Dispositivos").child("Salida").setValue("Seleccione lugar");
 
         mDatabase.child("Dispositivos").child("Array_dest").addValueEventListener(new ValueEventListener() {
             @Override

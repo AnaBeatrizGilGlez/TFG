@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -54,10 +55,19 @@ public class Beacon_2 extends AppCompatActivity {
 
                 List<String> direcciones = new ArrayList<String>();
                 List<String> nombre_direcciones = new ArrayList<String>();
+                List<String> paradas = new ArrayList<String>();
+
+                String salida = dataSnapshot.child("Salida").getValue().toString();
+                String destino = dataSnapshot.child("Destino").getValue().toString();
 
                 for(DataSnapshot note : dataSnapshot.child("Beacons").getChildren()){
                     direcciones.add(note.child("direccion").getValue().toString());
                     nombre_direcciones.add(note.child("nombre").getValue().toString());
+                }
+
+                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                    String paradas_n = note.getValue().toString();
+                    paradas.add(paradas_n);
                 }
 
                 mDatabase.child("Dispositivos").child("dispositivos").setValue("nothing");
@@ -72,7 +82,13 @@ public class Beacon_2 extends AppCompatActivity {
                     }
                 }
 
-                if(lugar.equals(dataSnapshot.child("Direcciones").child("Destino").getValue())){
+                AlertDialog.Builder builder = new AlertDialog.Builder(Beacon_2.this);
+                builder.setMessage(paradas.get(Integer.parseInt(check_obt)));
+                builder.setNegativeButton(R.string.aceptar, null);
+                builder.create();
+                builder.show();
+
+                if(lugar.equals(dataSnapshot.child("Destino").getValue())){
                     mp.start();
                 }else{
                     if (vibrator.hasVibrator()) {
@@ -100,11 +116,11 @@ public class Beacon_2 extends AppCompatActivity {
                     String dispositivo = dataSnapshot.child("dispositivos").getValue().toString();
                     mDatabase.child("Dispositivos").child("Beacons").child(dispositivo).child("encontrado").setValue(true);
                     if(lugar.equals(dataSnapshot.child("Destino").getValue())) {
+                        mp.stop();
                         Intent llegar=new Intent(Beacon_2.this, Fin.class);
                         llegar.putExtra("Cumplida",lugar);
                         llegar.putExtra("Google",valor_obt);
                         llegar.putExtra("dialog","0");
-                        mp.stop();
                         finish();
                         startActivity(llegar);
                     }else{

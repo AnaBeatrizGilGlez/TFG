@@ -130,18 +130,21 @@ public class Ruta_2 extends AppCompatActivity {
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                 List<String> paradas = new ArrayList<String>();
                 List<String> en_ruta = new ArrayList<String>();
+                List<String> tiempo_cont = new ArrayList<String>();
                 lugar.setText(dataSnapshot.child("Salida").getValue() + "-" + dataSnapshot.child("Destino").getValue());
                 String salida = dataSnapshot.child("Salida").getValue().toString();
                 String destino = dataSnapshot.child("Destino").getValue().toString();
                 String s_paradas = dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString();
                 Integer n_paradas = Integer.parseInt(s_paradas);
-                String s_tiempo = dataSnapshot.child("Rutas").child(salida).child(destino).child("tiempo").getValue().toString();
-                //Integer n_tiempo = Integer.parseInt(s_tiempo);
                 numeroparadas.setText(dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString());
-                tiempo.setText(dataSnapshot.child("Rutas").child(salida).child(destino).child("tiempo").getValue().toString());
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
                     String paradas_n = note.getValue().toString();
                     paradas.add(paradas_n);
+                }
+
+                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("tiempo").getChildren()) {
+                    String tiempo_n = note.getValue().toString();
+                    tiempo_cont.add(tiempo_n);
                 }
 
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Dispositivos_ruta").getChildren()) {
@@ -182,31 +185,31 @@ public class Ruta_2 extends AppCompatActivity {
                             }
                         }
                     }
-                    /*peripheralTextView.append(paradas.get(i) + "\n");
-                    final int scrollAmount = peripheralTextView.getLayout().getLineTop(peripheralTextView.getLineCount()) - peripheralTextView.getHeight();
-                    if (scrollAmount > 0)
-                        peripheralTextView.scrollTo(0, scrollAmount);*/
 
                 }
-                if (check_obt.equals("1")) {
-                    uno.setChecked(true);
-                    numeroparadas.setText(String.valueOf(n_paradas - 1));
-                    String ruta = destino + " - " + salida;
-                    //Integer tiempo_n = n_tiempo - Integer.parseInt(dataSnapshot.child("Tiempos").child(ruta).child("tiempo").getValue().toString());
-                    //tiempo.setText(String.valueOf(n_tiempo - tiempo_n));
-                } else {
-                    if (check_obt.equals("2")) {
+                if(check_obt.equals("0")){
+                    tiempo.setText(tiempo_cont.get(0));
+                    numeroparadas.setText(String.valueOf(n_paradas));
+                }else {
+                    if (check_obt.equals("1")) {
                         uno.setChecked(true);
-                        dos.setChecked(true);
-                        numeroparadas.setText(String.valueOf(n_paradas - 2));
-                        tiempo.setText("10 minutos");  //Parametro a pasar en cambiar
+                        numeroparadas.setText(String.valueOf(n_paradas - 1));
+                        tiempo.setText(tiempo_cont.get(1));
+
                     } else {
-                        if (check_obt.equals("3")) {
+                        if (check_obt.equals("2")) {
                             uno.setChecked(true);
                             dos.setChecked(true);
-                            tres.setChecked(true);
-                            numeroparadas.setText(String.valueOf(n_paradas - 3));
-                            tiempo.setText("10 minutos");
+                            numeroparadas.setText(String.valueOf(n_paradas - 2));
+                            tiempo.setText(tiempo_cont.get(2));
+                        } else {
+                            if (check_obt.equals("3")) {
+                                uno.setChecked(true);
+                                dos.setChecked(true);
+                                tres.setChecked(true);
+                                numeroparadas.setText(String.valueOf(n_paradas - 3));
+                                tiempo.setText(tiempo_cont.get(3));
+                            }
                         }
                     }
                 }
@@ -229,7 +232,6 @@ public class Ruta_2 extends AppCompatActivity {
     }
 
     public void stopScanning() {
-        System.out.println("stopping scanning");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
