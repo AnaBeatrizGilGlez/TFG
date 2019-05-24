@@ -36,13 +36,12 @@ public class Ruta_3 extends AppCompatActivity {
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            mDeviceList=result.getDevice().getAddress();
-            Log.i(String.valueOf(getApplicationContext()), mDeviceList);
+        public void onScanResult(int callbackType, final ScanResult result) {
             mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                    Log.i(String.valueOf(getApplicationContext()),"Hix10");
+                    mDeviceList=result.getDevice().getAddress();
+                    Log.i(String.valueOf(getApplicationContext()), mDeviceList);
                     List<String> direcciones = new ArrayList<String>();
                     List<String> nombre_direcciones = new ArrayList<String>();
                     List<String> encontrado = new ArrayList<String>();
@@ -68,8 +67,6 @@ public class Ruta_3 extends AppCompatActivity {
                                     cambiar.putExtra("Check", check_obt);
                                     startActivity(cambiar);
                                 }
-                            }else{
-                                startScanning();
                             }
                         }
                     }
@@ -153,6 +150,7 @@ public class Ruta_3 extends AppCompatActivity {
                 }
 
                 for (int i = 0; i < en_ruta.size(); i++) {
+                    Log.i(String.valueOf(getApplicationContext()),"DENTRO");
                     mDatabase.child("Dispositivos").child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
                 }
 

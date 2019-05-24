@@ -41,7 +41,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
     private GoogleApiClient googleApiClient;
     ImageView confi,foto_perfil;
     String aux,aux_salida;
-    private String mDeviceList=null;
+    String mDeviceList = "null";
     String inicializar="null";
     Bundle datos,dialog;
     String datos_obt,dialog_obt;
@@ -54,12 +54,12 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            mDeviceList=result.getDevice().getAddress();
-            Log.i(String.valueOf(getApplicationContext()),mDeviceList);
+        public void onScanResult(int callbackType, final ScanResult result) {
             mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                    mDeviceList = result.getDevice().getAddress();
+                    Log.i(String.valueOf(getApplicationContext()), mDeviceList);
                     List<String> direcciones = new ArrayList<String>();
                     List<String> nombre_direcciones = new ArrayList<>();
                     if (dataSnapshot.exists()) {
@@ -68,101 +68,20 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                             nombre_direcciones.add(note.child("nombre").getValue().toString());
                         }
 
-                        for(int i=0;i<direcciones.size();i++){
+                        for (int i = 0; i < direcciones.size(); i++) {
                             String nombre = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
                             mDatabase.child("Dispositivos").child("Beacons").child(nombre).child("encontrado").setValue(false);
                             mDatabase.child("Dispositivos").child("Beacons").child(nombre).child("ruta").setValue(false);
                         }
-
-                        for (int i = 0; i < direcciones.size(); i++) {
+                        for(int i=0;i<direcciones.size();i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
-                                Log.i(String.valueOf(getApplicationContext()),"Hi");
-                                stopScanning();
                                 mDatabase.child("Dispositivos").child("inicializar").setValue(nombre_direcciones.get(i));
+                                Log.i(String.valueOf(getApplicationContext()), "Hi");
+                                stopScanning();
                                 mDatabase.child("Dispositivos").child("aux_no").setValue("1");
-
-                                if(!isFinishing()) {
-                                    if(!dataSnapshot.child("inicializar").getValue().equals("nothing")) {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(Inicio_2.this);
-                                        builder.setMessage("¿Quiere usted salir de la parada " + dataSnapshot.child("inicializar").getValue() + "?")
-                                                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                                                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                                        salida_personas.setVisibility(View.GONE);
-                                                        start.setVisibility(View.GONE);
-                                                        mDatabase.child("Dispositivos").child("Salida").setValue(dataSnapshot.child("inicializar").getValue());
-                                                        if (dataSnapshot.child("Destino").getValue().equals("Seleccione lugar")) {
-                                                            Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            Log.i(String.valueOf(getApplicationContext()), "Yes");
-                                                            mDatabase.child("Dispositivos").child("aux_no").setValue("0");
-                                                        } else {
-                                                            if (dataSnapshot.child("Destino").getValue().equals(inicializar)) {
-                                                                Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
-                                                                        Toast.LENGTH_SHORT).show();
-                                                                mDatabase.child("Dispositivos").child("aux_no").setValue("0");
-                                                            } else {
-                                                                List<String> hijo = new ArrayList<>();
-                                                                String salida = dataSnapshot.child("Salida").getValue().toString();
-                                                                String destino = dataSnapshot.child("Destino").getValue().toString();
-                                                                for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
-                                                                    String paradas_checki = note.getKey();
-                                                                    hijo.add(paradas_checki);
-                                                                }
-
-                                                                for(int i=0;i<hijo.size();i++) {
-                                                                    mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
-                                                                }
-
-                                                                Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
-                                                                cambiar.putExtra("Google", datos_obt);
-                                                                cambiar.putExtra("Check", "0");
-                                                                finish();
-                                                                startActivity(cambiar);
-                                                            }
-                                                        }
-                                                    }
-                                                })
-                                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                                        if (dataSnapshot.child("Destino").getValue().equals("Seleccione lugar")) {
-                                                            Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            if (dataSnapshot.child("Salida").getValue().equals("Seleccione lugar")) {
-                                                                Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida.",
-                                                                        Toast.LENGTH_SHORT).show();
-                                                            } else {
-                                                                if (dataSnapshot.child("Destino").getValue().equals(aux_salida)) {
-                                                                    Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
-                                                                            Toast.LENGTH_SHORT).show();
-                                                                } else {
-                                                                    List<String> hijo = new ArrayList<>();
-                                                                    String salida = dataSnapshot.child("Salida").getValue().toString();
-                                                                    String destino = dataSnapshot.child("Destino").getValue().toString();
-                                                                    for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
-                                                                        String paradas_checki = note.getKey();
-                                                                        hijo.add(paradas_checki);
-                                                                    }
-
-                                                                    for(int i=0;i<hijo.size();i++) {
-                                                                        mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
-                                                                    }
-                                                                    Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
-                                                                    cambiar.putExtra("Google", datos_obt);
-                                                                    cambiar.putExtra("Check", "0");
-                                                                    finish();
-                                                                    startActivity(cambiar);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }).create();
-                                        builder.show();
-                                    }
-                                }
+                                Funcion();
                             }
                         }
-
                     }
                 }
 
@@ -183,6 +102,97 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         }
     };
 
+    private void Funcion() {
+        mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                Log.i(String.valueOf(getApplicationContext()), "Bye" + dataSnapshot.child("inicializar").getValue());
+                if (!dataSnapshot.child("inicializar").getValue().equals("nothing")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Inicio_2.this);
+                    builder.setMessage("¿Quiere usted salir de la parada " + dataSnapshot.child("inicializar").getValue() + "?")
+                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                    salida_personas.setVisibility(View.GONE);
+                                    start.setVisibility(View.GONE);
+                                    mDatabase.child("Dispositivos").child("Salida").setValue(dataSnapshot.child("inicializar").getValue());
+                                    if (dataSnapshot.child("Destino").getValue().equals("Seleccione lugar")) {
+                                        Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
+                                                Toast.LENGTH_SHORT).show();
+                                        Log.i(String.valueOf(getApplicationContext()), "Yes");
+                                        mDatabase.child("Dispositivos").child("aux_no").setValue("0");
+                                    } else {
+                                        if (dataSnapshot.child("Destino").getValue().equals(inicializar)) {
+                                            Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
+                                                    Toast.LENGTH_SHORT).show();
+                                            mDatabase.child("Dispositivos").child("aux_no").setValue("0");
+                                        } else {
+                                            List<String> hijo = new ArrayList<>();
+                                            String salida = dataSnapshot.child("Salida").getValue().toString();
+                                            String destino = dataSnapshot.child("Destino").getValue().toString();
+                                            for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                                                String paradas_checki = note.getKey();
+                                                hijo.add(paradas_checki);
+                                            }
+
+                                            for (int i = 0; i < hijo.size(); i++) {
+                                                mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                            }
+
+                                            Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
+                                            cambiar.putExtra("Google", datos_obt);
+                                            cambiar.putExtra("Check", "0");
+                                            finish();
+                                            startActivity(cambiar);
+                                        }
+                                    }
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                    if (dataSnapshot.child("Destino").getValue().equals("Seleccione lugar")) {
+                                        Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        if (dataSnapshot.child("Salida").getValue().equals("Seleccione lugar")) {
+                                            Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (dataSnapshot.child("Destino").getValue().equals(aux_salida)) {
+                                                Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
+                                                        Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                List<String> hijo = new ArrayList<>();
+                                                String salida = dataSnapshot.child("Salida").getValue().toString();
+                                                String destino = dataSnapshot.child("Destino").getValue().toString();
+                                                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                                                    String paradas_checki = note.getKey();
+                                                    hijo.add(paradas_checki);
+                                                }
+
+                                                for (int i = 0; i < hijo.size(); i++) {
+                                                    mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                                }
+                                                Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
+                                                cambiar.putExtra("Google", datos_obt);
+                                                cambiar.putExtra("Check", "0");
+                                                finish();
+                                                startActivity(cambiar);
+                                            }
+                                        }
+                                    }
+                                }
+                            }).create();
+                    builder.show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inicio);
@@ -194,6 +204,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         mDatabase.child("Dispositivos").child("Destino").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("Salida").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("aux_check").setValue("0");
+
 
         mDatabase.child("Dispositivos").child("Array_dest").addValueEventListener(new ValueEventListener() {
             @Override
@@ -243,6 +254,9 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
+
+        stopScanning();
+        startScanning();
 
         datos = getIntent().getExtras();
         dialog = getIntent().getExtras();
