@@ -21,7 +21,7 @@
             app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.934" />
+            app:layout_constraintVertical_bias="0.96"/>
 
 
     <TextView
@@ -57,10 +57,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.436" />
+            app:layout_constraintVertical_bias="0.414"/>
 
     <TextView
             android:id="@+id/tiempotitulo"
@@ -130,67 +130,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.148" />
 
-    <CheckedTextView
-            android:id="@+id/Uno"
-            android:layout_width="314dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="false"
-            android:text="CheckedTextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.615"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.522"/>
-
-    <CheckedTextView
-            android:id="@+id/Cuatro"
-            android:layout_width="314dp"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="false"
-            android:text="CheckedTextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.618"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.013" app:layout_constraintTop_toBottomOf="@+id/Tres"/>
-
-    <CheckedTextView
-            android:id="@+id/Tres"
-            android:layout_width="314dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="false"
-            android:text="CheckedTextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.618"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.691"/>
-
-    <CheckedTextView
-            android:id="@+id/Dos"
-            android:layout_width="314dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="false"
-            android:text="CheckedTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.618"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.606" app:layout_constraintBottom_toBottomOf="parent"/>
+    <LinearLayout
+            android:id="@+id/contenedor"
+            android:orientation="vertical"
+            android:layout_width="375dp"
+            android:layout_height="267dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="0.357" app:layout_constraintVertical_bias="0.807">
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

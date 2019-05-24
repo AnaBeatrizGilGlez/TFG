@@ -29,7 +29,9 @@
         <activity android:name=".Fin" android:screenOrientation="portrait"/>
         <activity android:name=".Inicio_2" android:screenOrientation="portrait" />
         <activity android:name=".Ruta_2" android:screenOrientation="portrait"/>
+        <activity android:name=".Ruta_3" android:screenOrientation="portrait"/>
         <activity android:name=".Beacon_2" android:screenOrientation="portrait"/>
+        <activity android:name=".Beacon_3" android:screenOrientation="portrait"/>
         <activity android:name=".MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -76,6 +76,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
 
                         for (int i = 0; i < direcciones.size(); i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
+                                Log.i(String.valueOf(getApplicationContext()),"Hi");
                                 stopScanning();
                                 mDatabase.child("Dispositivos").child("inicializar").setValue(nombre_direcciones.get(i));
                                 mDatabase.child("Dispositivos").child("aux_no").setValue("1");
@@ -100,7 +101,19 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                                                                         Toast.LENGTH_SHORT).show();
                                                                 mDatabase.child("Dispositivos").child("aux_no").setValue("0");
                                                             } else {
-                                                                Intent cambiar = new Intent(Inicio_2.this, Ruta_2.class);
+                                                                List<String> hijo = new ArrayList<>();
+                                                                String salida = dataSnapshot.child("Salida").getValue().toString();
+                                                                String destino = dataSnapshot.child("Destino").getValue().toString();
+                                                                for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
+                                                                    String paradas_checki = note.getKey();
+                                                                    hijo.add(paradas_checki);
+                                                                }
+
+                                                                for(int i=0;i<hijo.size();i++) {
+                                                                    mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                                                }
+
+                                                                Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
                                                                 cambiar.putExtra("Google", datos_obt);
                                                                 cambiar.putExtra("Check", "0");
                                                                 finish();
@@ -123,7 +136,18 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                                                                     Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
                                                                             Toast.LENGTH_SHORT).show();
                                                                 } else {
-                                                                    Intent cambiar = new Intent(Inicio_2.this, Ruta_2.class);
+                                                                    List<String> hijo = new ArrayList<>();
+                                                                    String salida = dataSnapshot.child("Salida").getValue().toString();
+                                                                    String destino = dataSnapshot.child("Destino").getValue().toString();
+                                                                    for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
+                                                                        String paradas_checki = note.getKey();
+                                                                        hijo.add(paradas_checki);
+                                                                    }
+
+                                                                    for(int i=0;i<hijo.size();i++) {
+                                                                        mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                                                    }
+                                                                    Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
                                                                     cambiar.putExtra("Google", datos_obt);
                                                                     cambiar.putExtra("Check", "0");
                                                                     finish();
@@ -169,6 +193,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         mDatabase.child("Dispositivos").child("inicializar").setValue("nothing");
         mDatabase.child("Dispositivos").child("Destino").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("Salida").setValue("Seleccione lugar");
+        mDatabase.child("Dispositivos").child("aux_check").setValue("0");
 
         mDatabase.child("Dispositivos").child("Array_dest").addValueEventListener(new ValueEventListener() {
             @Override
@@ -381,7 +406,18 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                                 Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
                                         Toast.LENGTH_SHORT).show();
                             }else{
-                                Intent cambiar = new Intent(Inicio_2.this, Ruta_2.class);
+                                List<String> hijo = new ArrayList<>();
+                                String salida = dataSnapshot.child("Salida").getValue().toString();
+                                String destino = dataSnapshot.child("Destino").getValue().toString();
+                                for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
+                                    String paradas_checki = note.getKey();
+                                    hijo.add(paradas_checki);
+                                }
+
+                                for(int i=0;i<hijo.size();i++) {
+                                    mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                }
+                                Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
                                 cambiar.putExtra("Google",datos_obt);
                                 cambiar.putExtra("Check","0");
                                 finish();
@@ -399,7 +435,18 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                                         Toast.LENGTH_SHORT).show();
                                 mDatabase.child("Dispositivos").child("aux_no").setValue("0");
                             } else {
-                                Intent cambiar = new Intent(Inicio_2.this, Ruta_2.class);
+                                List<String> hijo = new ArrayList<>();
+                                String salida = dataSnapshot.child("Salida").getValue().toString();
+                                String destino = dataSnapshot.child("Destino").getValue().toString();
+                                for(DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
+                                    String paradas_checki = note.getKey();
+                                    hijo.add(paradas_checki);
+                                }
+
+                                for(int i=0;i<hijo.size();i++) {
+                                    mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
+                                }
+                                Intent cambiar = new Intent(Inicio_2.this, Ruta_3.class);
                                 cambiar.putExtra("Google",datos_obt);
                                 cambiar.putExtra("Check","0");
                                 finish();

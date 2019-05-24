@@ -7,33 +7,32 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckedTextView;
-import android.widget.TextView;
+import android.widget.*;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ruta_2 extends AppCompatActivity {
+public class Ruta_3 extends AppCompatActivity {
     TextView paradas,numeroparadas, lugar,detectar,tiempotitulo,tiempo;
     Button buscar,cancelar;
-    CheckedTextView uno,dos,tres,cuatro;
     private String mDeviceList=null;
     BluetoothManager btManager;
-    TextView peripheralTextView;
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
     Bundle valor, check;
     String valor_obt, check_obt;
     private DatabaseReference mDatabase;
     private FirebaseDatabase mFirebasedata;
+    LinearLayout contenedor;
+
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -43,6 +42,7 @@ public class Ruta_2 extends AppCompatActivity {
             mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                    Log.i(String.valueOf(getApplicationContext()),"Hix10");
                     List<String> direcciones = new ArrayList<String>();
                     List<String> nombre_direcciones = new ArrayList<String>();
                     List<String> encontrado = new ArrayList<String>();
@@ -58,16 +58,18 @@ public class Ruta_2 extends AppCompatActivity {
                         for(int i=0;i<direcciones.size();i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
                                 if((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))){
-                                    Log.i(String.valueOf(getApplicationContext()),"Hix5" + mDeviceList);
-                                    Intent cambiar = new Intent(Ruta_2.this, Beacon_2.class);
+                                    finish();
+                                    Log.i(String.valueOf(getApplicationContext()),"Hix8");
+                                    Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
                                     stopScanning();
                                     cambiar.putExtra("Datos", mDeviceList);
                                     cambiar.putExtra("Google", valor_obt);
                                     cambiar.putExtra("dialog","0");
                                     cambiar.putExtra("Check", check_obt);
-                                    finish();
                                     startActivity(cambiar);
                                 }
+                            }else{
+                                startScanning();
                             }
                         }
                     }
@@ -92,11 +94,13 @@ public class Ruta_2 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ruta);
+        setContentView(R.layout.ruta_2);
 
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
+
+        contenedor = findViewById(R.id.contenedor);
 
         mFirebasedata = FirebaseDatabase.getInstance();
         mDatabase = mFirebasedata.getReference();
@@ -117,31 +121,26 @@ public class Ruta_2 extends AppCompatActivity {
         detectar = findViewById(R.id.detectar);
         tiempotitulo = findViewById(R.id.tiempotitulo);
         tiempo = findViewById(R.id.tiempo);
-        uno = findViewById(R.id.Uno);
-        uno.setVisibility(View.GONE);
-        tres = findViewById(R.id.Tres);
-        tres.setVisibility(View.GONE);
-        dos = findViewById(R.id.Dos);
-        dos.setVisibility(View.GONE);
-        cuatro = findViewById(R.id.Cuatro);
-        cuatro.setVisibility(View.GONE);
 
         mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                 List<String> paradas = new ArrayList<String>();
+                List<String> paradas_check = new ArrayList<String>();
                 List<String> en_ruta = new ArrayList<String>();
                 List<String> tiempo_cont = new ArrayList<String>();
-                Log.i(String.valueOf(getApplicationContext()),"Hix4");
                 lugar.setText(dataSnapshot.child("Salida").getValue() + "-" + dataSnapshot.child("Destino").getValue());
                 String salida = dataSnapshot.child("Salida").getValue().toString();
                 String destino = dataSnapshot.child("Destino").getValue().toString();
                 String s_paradas = dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString();
                 Integer n_paradas = Integer.parseInt(s_paradas);
-                numeroparadas.setText(dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString());
+                Log.i(String.valueOf(getApplicationContext()),"Hix10101010101");
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
-                    String paradas_n = note.getValue().toString();
+                    String paradas_n = note.child("descripcion").getValue().toString();
                     paradas.add(paradas_n);
+                    String paradas_ncheck = note.child("check").getValue().toString();
+                    paradas_check.add(paradas_ncheck);
+                    Log.i(String.valueOf(getApplicationContext()),"Hix5" + paradas_ncheck);
                 }
 
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("tiempo").getChildren()) {
@@ -157,63 +156,32 @@ public class Ruta_2 extends AppCompatActivity {
                     mDatabase.child("Dispositivos").child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
                 }
 
-                for (int i = 0; i < paradas.size(); i++) {
-                    if (i == 0) {
-                        uno.setVisibility(View.VISIBLE);
-                        uno.setText(paradas.get(i));
-                    } else if (i == 1) {
-                        uno.setVisibility(View.VISIBLE);
-                        uno.setText(paradas.get(i - 1));
-                        dos.setVisibility(View.VISIBLE);
-                        dos.setText(paradas.get(i));
-                    } else {
-                        if (i == 2) {
-                            uno.setVisibility(View.VISIBLE);
-                            uno.setText(paradas.get(i - 2));
-                            dos.setVisibility(View.VISIBLE);
-                            dos.setText(paradas.get(i - 1));
-                            tres.setVisibility(View.VISIBLE);
-                            tres.setText(paradas.get(i));
-                        } else {
-                            if (i == 3) {
-                                uno.setVisibility(View.VISIBLE);
-                                uno.setText(paradas.get(i - 3));
-                                dos.setVisibility(View.VISIBLE);
-                                dos.setText(paradas.get(i - 2));
-                                tres.setVisibility(View.VISIBLE);
-                                tres.setText(paradas.get(i - 1));
-                                cuatro.setVisibility(View.VISIBLE);
-                                cuatro.setText(paradas.get(i));
-                            }
-                        }
-                    }
-
+                ArrayList<Check> lista = new ArrayList<Check>();
+                for(int i=0;i<paradas.size();i++){
+                    lista.add(new Check(i,paradas.get(i)));
                 }
-                if(check_obt.equals("0")){
-                    tiempo.setText(tiempo_cont.get(0));
-                    numeroparadas.setText(String.valueOf(n_paradas));
-                }else {
-                    if (check_obt.equals("1")) {
-                        uno.setChecked(true);
-                        numeroparadas.setText(String.valueOf(n_paradas - 1));
-                        tiempo.setText(tiempo_cont.get(1));
 
-                    } else {
-                        if (check_obt.equals("2")) {
-                            uno.setChecked(true);
-                            dos.setChecked(true);
-                            numeroparadas.setText(String.valueOf(n_paradas - 2));
-                            tiempo.setText(tiempo_cont.get(2));
-                        } else {
-                            if (check_obt.equals("3")) {
-                                uno.setChecked(true);
-                                dos.setChecked(true);
-                                tres.setChecked(true);
-                                numeroparadas.setText(String.valueOf(n_paradas - 3));
-                                tiempo.setText(tiempo_cont.get(3));
-                            }
-                        }
+                Integer i=0;
+                String valor_check = dataSnapshot.child("aux_check").getValue().toString();
+                Integer valor_check_int = Integer.parseInt(valor_check);
+                for(Check c:lista){
+                    CheckBox cb = new CheckBox(getApplicationContext());
+                    cb.setText(c.nombre);
+                    cb.setEnabled(false);
+                    if(paradas_check.get(i).equals("true")){
+                        cb.setChecked(true);
+                    }else{
+                        cb.setChecked(false);
                     }
+                    cb.setId(c.cod);
+                    cb.setTextColor(Color.BLACK);
+                    contenedor.addView(cb);
+                    tiempo.setText(tiempo_cont.get(valor_check_int));
+                    n_paradas=n_paradas-valor_check_int;
+                    String n_paraditas = String.valueOf(n_paradas);
+                    Log.i(String.valueOf(getApplicationContext()), "Cucu" + n_paraditas);
+                    numeroparadas.setText(n_paraditas);
+                    i++;
                 }
             }
 
@@ -247,7 +215,7 @@ public class Ruta_2 extends AppCompatActivity {
         mDatabase.child("Dispositivos").child("Salida").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("inicializar").setValue("nothing");
 
-        Intent cambiar= new Intent(Ruta_2.this,Inicio_2.class);
+        Intent cambiar= new Intent(Ruta_3.this,Inicio_2.class);
         cambiar.putExtra("Google", valor_obt);
         cambiar.putExtra("dialog","0");
         finish();

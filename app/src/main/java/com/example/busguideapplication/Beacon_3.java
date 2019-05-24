@@ -17,7 +17,7 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Beacon_2 extends AppCompatActivity {
+public class Beacon_3 extends AppCompatActivity {
     Bundle datos,valor,check;
     TextView dates;
     Button parar, cambiar;
@@ -56,9 +56,13 @@ public class Beacon_2 extends AppCompatActivity {
                 List<String> direcciones = new ArrayList<String>();
                 List<String> nombre_direcciones = new ArrayList<String>();
                 List<String> paradas = new ArrayList<String>();
+                List<String> paradas_check = new ArrayList<String>();
 
                 String salida = dataSnapshot.child("Salida").getValue().toString();
                 String destino = dataSnapshot.child("Destino").getValue().toString();
+                String nuevo_check_string = dataSnapshot.child("aux_check").getValue().toString();
+                Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
+                nuevo_check_int = nuevo_check_int + 1;
 
                 for(DataSnapshot note : dataSnapshot.child("Beacons").getChildren()){
                     direcciones.add(note.child("direccion").getValue().toString());
@@ -66,15 +70,15 @@ public class Beacon_2 extends AppCompatActivity {
                 }
 
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
-                    String paradas_n = note.getValue().toString();
+                    String paradas_n = note.child("descripcion").getValue().toString();
                     paradas.add(paradas_n);
+                    String paradas_checki = note.getKey();
+                    paradas_check.add(paradas_checki);
+                    Log.i(String.valueOf(getApplicationContext()), paradas_checki);
                 }
-
-                mDatabase.child("Dispositivos").child("dispositivos").setValue("nothing");
 
                 for(int i=0;i<direcciones.size();i++){
                     if(datos_obt.equals(direcciones.get(i))){
-                        Log.i(String.valueOf(getApplicationContext()),"Hix2");
                         lugar = nombre_direcciones.get(i);
                         dates.setText(nombre_direcciones.get(i));
                         String dispositivo = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
@@ -83,8 +87,9 @@ public class Beacon_2 extends AppCompatActivity {
                     }
                 }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(Beacon_2.this);
-                builder.setMessage(paradas.get(Integer.parseInt(check_obt)));
+                mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(nuevo_check_int-1)).child("check").setValue(true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Beacon_3.this);
+                builder.setMessage(paradas.get(nuevo_check_int-1));
                 builder.setNegativeButton(R.string.aceptar, null);
                 builder.create();
                 builder.show();
@@ -115,17 +120,24 @@ public class Beacon_2 extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     String dispositivo = dataSnapshot.child("dispositivos").getValue().toString();
+                    String nuevo_check_string = dataSnapshot.child("aux_check").getValue().toString();
+                    Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
+                    nuevo_check_int = nuevo_check_int + 1;
+                    String nuevo_check = String.valueOf(nuevo_check_int);
+                    mDatabase.child("Dispositivos").child("aux_check").setValue(nuevo_check);
                     mDatabase.child("Dispositivos").child("Beacons").child(dispositivo).child("encontrado").setValue(true);
+                    mDatabase.child("Dispositivos").child("dispositivos").setValue("nothing");
+
                     if(lugar.equals(dataSnapshot.child("Destino").getValue())) {
                         mp.stop();
-                        Intent llegar=new Intent(Beacon_2.this, Fin.class);
+                        Intent llegar=new Intent(Beacon_3.this, Fin.class);
                         llegar.putExtra("Cumplida",lugar);
                         llegar.putExtra("Google",valor_obt);
                         llegar.putExtra("dialog","0");
                         finish();
                         startActivity(llegar);
                     }else{
-                        Intent vuelta = new Intent(Beacon_2.this, Ruta_2.class);
+                        Intent vuelta = new Intent(Beacon_3.this, Ruta_3.class);
                         numero=Integer.parseInt(check_obt);
                         numero=numero+1;
                         numero_string=String.valueOf(numero);
@@ -145,7 +157,7 @@ public class Beacon_2 extends AppCompatActivity {
     }
 
     public void Cambiar_Ruta(View view){
-        Intent cambiar = new Intent(Beacon_2.this,Inicio_2.class);
+        Intent cambiar = new Intent(Beacon_3.this,Inicio_2.class);
         cambiar.putExtra("Google",valor_obt);
         cambiar.putExtra("dialog","0");
         finish();
