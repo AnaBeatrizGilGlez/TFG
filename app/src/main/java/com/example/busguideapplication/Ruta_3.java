@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.method.ScrollingMovementMethod;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -159,6 +160,7 @@ public class Ruta_3 extends AppCompatActivity {
                     lista.add(new Check(i,paradas.get(i)));
                 }
 
+
                 Integer i=0;
                 String valor_check = dataSnapshot.child("aux_check").getValue().toString();
                 Integer valor_check_int = Integer.parseInt(valor_check);
@@ -174,6 +176,7 @@ public class Ruta_3 extends AppCompatActivity {
                     cb.setId(c.cod);
                     cb.setTextColor(Color.BLACK);
                     contenedor.addView(cb);
+
                     tiempo.setText(tiempo_cont.get(valor_check_int));
                     n_paradas=n_paradas-valor_check_int;
                     String n_paraditas = String.valueOf(n_paradas);
