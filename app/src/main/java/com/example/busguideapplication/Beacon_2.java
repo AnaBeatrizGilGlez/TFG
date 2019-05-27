@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -56,9 +58,10 @@ public class Beacon_2 extends AppCompatActivity {
                 List<String> direcciones = new ArrayList<String>();
                 List<String> nombre_direcciones = new ArrayList<String>();
                 List<String> paradas = new ArrayList<String>();
+                FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
                 String salida = dataSnapshot.child("Salida").getValue().toString();
-                String destino = dataSnapshot.child("Destino").getValue().toString();
+                String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
 
                 for(DataSnapshot note : dataSnapshot.child("Beacons").getChildren()){
                     direcciones.add(note.child("direccion").getValue().toString());
@@ -89,7 +92,7 @@ public class Beacon_2 extends AppCompatActivity {
                 builder.create();
                 builder.show();
 
-                if(lugar.equals(dataSnapshot.child("Destino").getValue())){
+                if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())){
                     mp.start();
                 }else{
                     if (vibrator.hasVibrator()) {
@@ -114,9 +117,10 @@ public class Beacon_2 extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+                    FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
                     String dispositivo = dataSnapshot.child("dispositivos").getValue().toString();
                     mDatabase.child("Dispositivos").child("Beacons").child(dispositivo).child("encontrado").setValue(true);
-                    if(lugar.equals(dataSnapshot.child("Destino").getValue())) {
+                    if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())) {
                         mp.stop();
                         Intent llegar=new Intent(Beacon_2.this, Fin.class);
                         llegar.putExtra("Cumplida",lugar);

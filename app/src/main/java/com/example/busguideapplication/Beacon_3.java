@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -57,10 +59,11 @@ public class Beacon_3 extends AppCompatActivity {
                 List<String> nombre_direcciones = new ArrayList<String>();
                 List<String> paradas = new ArrayList<String>();
                 List<String> paradas_check = new ArrayList<String>();
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
 
-                String salida = dataSnapshot.child("Salida").getValue().toString();
-                String destino = dataSnapshot.child("Destino").getValue().toString();
-                String nuevo_check_string = dataSnapshot.child("aux_check").getValue().toString();
+                String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
+                String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
+                String nuevo_check_string = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
                 Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
                 nuevo_check_int = nuevo_check_int + 1;
 
@@ -82,19 +85,19 @@ public class Beacon_3 extends AppCompatActivity {
                         lugar = nombre_direcciones.get(i);
                         dates.setText(nombre_direcciones.get(i));
                         String dispositivo = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
-                        mDatabase.child("Dispositivos").child("dispositivos").setValue(dispositivo);
-                        mDatabase.child("Dispositivos").child("Beacons").child(dispositivo).child("encontrado").setValue("true");
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("dispositivos").setValue(dispositivo);
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(dispositivo).child("encontrado").setValue("true");
                     }
                 }
 
-                mDatabase.child("Dispositivos").child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(nuevo_check_int-1)).child("check").setValue(true);
+                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(nuevo_check_int-1)).child("check").setValue(true);
                 AlertDialog.Builder builder = new AlertDialog.Builder(Beacon_3.this);
                 builder.setMessage(paradas.get(nuevo_check_int-1));
                 builder.setNegativeButton(R.string.aceptar, null);
                 builder.create();
                 builder.show();
 
-                if(lugar.equals(dataSnapshot.child("Destino").getValue())){
+                if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())){
                     mp.start();
                 }else{
                     if (vibrator.hasVibrator()) {
@@ -119,16 +122,18 @@ public class Beacon_3 extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    String dispositivo = dataSnapshot.child("dispositivos").getValue().toString();
-                    String nuevo_check_string = dataSnapshot.child("aux_check").getValue().toString();
+                    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+                    String dispositivo = dataSnapshot.child("Usuarios").child(user.getUid()).child("dispositivos").getValue().toString();
+                    String nuevo_check_string = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
                     Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
                     nuevo_check_int = nuevo_check_int + 1;
                     String nuevo_check = String.valueOf(nuevo_check_int);
-                    mDatabase.child("Dispositivos").child("aux_check").setValue(nuevo_check);
-                    mDatabase.child("Dispositivos").child("Beacons").child(dispositivo).child("encontrado").setValue(true);
-                    mDatabase.child("Dispositivos").child("dispositivos").setValue("nothing");
 
-                    if(lugar.equals(dataSnapshot.child("Destino").getValue())) {
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_check").setValue(nuevo_check);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(dispositivo).child("encontrado").setValue(true);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("dispositivos").setValue("nothing");
+
+                    if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())) {
                         mp.stop();
                         Intent llegar=new Intent(Beacon_3.this, Fin.class);
                         llegar.putExtra("Cumplida",lugar);

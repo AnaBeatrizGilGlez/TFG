@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.text.method.ScrollingMovementMethod;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -47,10 +50,15 @@ public class Ruta_3 extends AppCompatActivity {
                     List<String> nombre_direcciones = new ArrayList<String>();
                     List<String> encontrado = new ArrayList<String>();
                     List<String> ruta = new ArrayList<String>();
+                    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
                             direcciones.add(note.child("direccion").getValue().toString());
                             nombre_direcciones.add(note.child("nombre").getValue().toString());
+                        }
+
+                        for(DataSnapshot note : dataSnapshot.child("Usuarios").child(user.getUid()).child("Beacons").getChildren()){
                             encontrado.add(note.child("encontrado").getValue().toString());
                             ruta.add(note.child("ruta").getValue().toString());
                         }
@@ -107,6 +115,7 @@ public class Ruta_3 extends AppCompatActivity {
         check = getIntent().getExtras();
         valor_obt = valor.getString("Google");
         check_obt = check.getString("Check");
+        final Integer check_int = Integer.parseInt(check_obt);
 
         buscar = findViewById(R.id.buscar);
         stopScanning();
@@ -127,18 +136,22 @@ public class Ruta_3 extends AppCompatActivity {
                 List<String> paradas_check = new ArrayList<String>();
                 List<String> en_ruta = new ArrayList<String>();
                 List<String> tiempo_cont = new ArrayList<String>();
-                lugar.setText(dataSnapshot.child("Salida").getValue() + "-" + dataSnapshot.child("Destino").getValue());
-                String salida = dataSnapshot.child("Salida").getValue().toString();
-                String destino = dataSnapshot.child("Destino").getValue().toString();
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+
+                lugar.setText(dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue() + "-" + dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue());
+                String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
+                String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
                 String s_paradas = dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString();
                 Integer n_paradas = Integer.parseInt(s_paradas);
                 Log.i(String.valueOf(getApplicationContext()),"Hix10101010101");
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
                     String paradas_n = note.child("descripcion").getValue().toString();
                     paradas.add(paradas_n);
+                }
+
+                for(DataSnapshot note : dataSnapshot.child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").getChildren()){
                     String paradas_ncheck = note.child("check").getValue().toString();
                     paradas_check.add(paradas_ncheck);
-                    Log.i(String.valueOf(getApplicationContext()),"Hix5" + paradas_ncheck);
                 }
 
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("tiempo").getChildren()) {
@@ -152,7 +165,7 @@ public class Ruta_3 extends AppCompatActivity {
 
                 for (int i = 0; i < en_ruta.size(); i++) {
                     Log.i(String.valueOf(getApplicationContext()),"DENTRO");
-                    mDatabase.child("Dispositivos").child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
                 }
 
                 ArrayList<Check> lista = new ArrayList<Check>();
@@ -162,7 +175,7 @@ public class Ruta_3 extends AppCompatActivity {
 
 
                 Integer i=0;
-                String valor_check = dataSnapshot.child("aux_check").getValue().toString();
+                String valor_check = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
                 Integer valor_check_int = Integer.parseInt(valor_check);
                 for(Check c:lista){
                     CheckBox cb = new CheckBox(getApplicationContext());
@@ -178,9 +191,8 @@ public class Ruta_3 extends AppCompatActivity {
                     contenedor.addView(cb);
 
                     tiempo.setText(tiempo_cont.get(valor_check_int));
-                    n_paradas=n_paradas-valor_check_int;
+                    n_paradas=n_paradas-check_int;
                     String n_paraditas = String.valueOf(n_paradas);
-                    Log.i(String.valueOf(getApplicationContext()), "Cucu" + n_paraditas);
                     numeroparadas.setText(n_paraditas);
                     i++;
                 }
@@ -212,10 +224,6 @@ public class Ruta_3 extends AppCompatActivity {
     }
 
     public void Cancelar_Ruta (View view){
-        mDatabase.child("Dispositivos").child("Destino").setValue("Seleccione lugar");
-        mDatabase.child("Dispositivos").child("Salida").setValue("Seleccione lugar");
-        mDatabase.child("Dispositivos").child("inicializar").setValue("nothing");
-
         Intent cambiar= new Intent(Ruta_3.this,Inicio_2.class);
         cambiar.putExtra("Google", valor_obt);
         cambiar.putExtra("dialog","0");

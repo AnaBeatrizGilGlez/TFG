@@ -17,12 +17,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Configuracion extends AppCompatActivity {
     private static final int CHOOSE_IMAGE = 101;
     private static final String TAG = "Configuracion";
     EditText Contraseña,Nombre;
     ImageView camarafotos;
+    private DatabaseReference mDatabase;
+    private FirebaseDatabase mFirebasedata;
 
     Uri uriprofile;
     String aux="1";
@@ -35,6 +39,9 @@ public class Configuracion extends AppCompatActivity {
         Contraseña = findViewById(R.id.contraseña);
         Nombre = findViewById(R.id.Nombre);
         camarafotos=findViewById(R.id.camarafotos);
+
+        mFirebasedata = FirebaseDatabase.getInstance();
+        mDatabase = mFirebasedata.getReference();
 
         FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
         FirebaseUser user=firebaseAuth.getCurrentUser();
@@ -75,6 +82,7 @@ public class Configuracion extends AppCompatActivity {
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                     .setDisplayName(nombre_nuevo).build();
             user.updateProfile(profileUpdates);
+            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("nombre").setValue(user.getDisplayName());
         }
 
         if(!Contraseña.getText().toString().isEmpty()){
