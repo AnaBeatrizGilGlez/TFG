@@ -50,7 +50,12 @@ public class Ruta_3 extends AppCompatActivity {
                     List<String> nombre_direcciones = new ArrayList<String>();
                     List<String> encontrado = new ArrayList<String>();
                     List<String> ruta = new ArrayList<String>();
+                    List<String> en_ruta = new ArrayList<String>();
+                    Integer check_int = Integer.parseInt(check_obt);
+
                     FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+                    String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
+                    String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
 
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
@@ -63,18 +68,25 @@ public class Ruta_3 extends AppCompatActivity {
                             ruta.add(note.child("ruta").getValue().toString());
                         }
 
+                        for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                            en_ruta.add(note.child("Dispositivo_ruta").getValue().toString());
+                        }
+
+                        String direccion = dataSnapshot.child("Beacons").child(en_ruta.get(check_int)).child("direccion").getValue().toString();
+
                         for(int i=0;i<direcciones.size();i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
-                                if((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))){
-                                    finish();
-                                    Log.i(String.valueOf(getApplicationContext()),"Hix8");
-                                    Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
-                                    stopScanning();
-                                    cambiar.putExtra("Datos", mDeviceList);
-                                    cambiar.putExtra("Google", valor_obt);
-                                    cambiar.putExtra("dialog","0");
-                                    cambiar.putExtra("Check", check_obt);
-                                    startActivity(cambiar);
+                                if(mDeviceList.equals(direccion)){
+                                    if((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
+                                        finish();
+                                        Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
+                                        stopScanning();
+                                        cambiar.putExtra("Datos", mDeviceList);
+                                        cambiar.putExtra("Google", valor_obt);
+                                        cambiar.putExtra("dialog", "0");
+                                        cambiar.putExtra("Check", check_obt);
+                                        startActivity(cambiar);
+                                    }
                                 }
                             }
                         }
@@ -143,7 +155,7 @@ public class Ruta_3 extends AppCompatActivity {
                 String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
                 String s_paradas = dataSnapshot.child("Rutas").child(salida).child(destino).child("numero_paradas").getValue().toString();
                 Integer n_paradas = Integer.parseInt(s_paradas);
-                Log.i(String.valueOf(getApplicationContext()),"Hix10101010101");
+
                 for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
                     String paradas_n = note.child("descripcion").getValue().toString();
                     paradas.add(paradas_n);
@@ -159,12 +171,11 @@ public class Ruta_3 extends AppCompatActivity {
                     tiempo_cont.add(tiempo_n);
                 }
 
-                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Dispositivos_ruta").getChildren()) {
-                    en_ruta.add(note.getValue().toString());
+                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                    en_ruta.add(note.child("Dispositivo_ruta").getValue().toString());
                 }
 
                 for (int i = 0; i < en_ruta.size(); i++) {
-                    Log.i(String.valueOf(getApplicationContext()),"DENTRO");
                     mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
                 }
 
@@ -172,7 +183,7 @@ public class Ruta_3 extends AppCompatActivity {
                 for(int i=0;i<paradas.size();i++){
                     lista.add(new Check(i,paradas.get(i)));
                 }
-                
+
                 Integer i=0;
                 for(Check c:lista){
                     CheckBox cb = new CheckBox(getApplicationContext());
