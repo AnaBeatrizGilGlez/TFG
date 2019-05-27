@@ -172,11 +172,8 @@ public class Ruta_3 extends AppCompatActivity {
                 for(int i=0;i<paradas.size();i++){
                     lista.add(new Check(i,paradas.get(i)));
                 }
-
-
+                
                 Integer i=0;
-                String valor_check = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
-                Integer valor_check_int = Integer.parseInt(valor_check);
                 for(Check c:lista){
                     CheckBox cb = new CheckBox(getApplicationContext());
                     cb.setText(c.nombre);
@@ -189,13 +186,12 @@ public class Ruta_3 extends AppCompatActivity {
                     cb.setId(c.cod);
                     cb.setTextColor(Color.BLACK);
                     contenedor.addView(cb);
-
-                    tiempo.setText(tiempo_cont.get(valor_check_int));
-                    n_paradas=n_paradas-check_int;
-                    String n_paraditas = String.valueOf(n_paradas);
-                    numeroparadas.setText(n_paraditas);
                     i++;
                 }
+                n_paradas=n_paradas-check_int;
+                String n_paraditas = String.valueOf(n_paradas);
+                numeroparadas.setText(n_paraditas);
+                tiempo.setText(tiempo_cont.get(check_int));
             }
 
             @Override

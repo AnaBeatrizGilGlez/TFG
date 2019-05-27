@@ -208,7 +208,6 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("inicializar").setValue("nothing");
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Destino").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Salida").setValue("Seleccione lugar");
-        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_check").setValue("0");
 
 
         mDatabase.child("Dispositivos").child("Array_dest").addValueEventListener(new ValueEventListener() {

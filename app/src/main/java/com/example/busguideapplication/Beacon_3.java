@@ -43,6 +43,7 @@ public class Beacon_3 extends AppCompatActivity {
         valor_obt = valor.getString("Google");
         check=getIntent().getExtras();
         check_obt=check.getString("Check");
+        final Integer check_int = Integer.parseInt(check_obt);
 
         mFirebasedata = FirebaseDatabase.getInstance();
         mDatabase = mFirebasedata.getReference();
@@ -63,9 +64,6 @@ public class Beacon_3 extends AppCompatActivity {
 
                 String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
                 String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
-                String nuevo_check_string = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
-                Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
-                nuevo_check_int = nuevo_check_int + 1;
 
                 for(DataSnapshot note : dataSnapshot.child("Beacons").getChildren()){
                     direcciones.add(note.child("direccion").getValue().toString());
@@ -90,9 +88,9 @@ public class Beacon_3 extends AppCompatActivity {
                     }
                 }
 
-                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(nuevo_check_int-1)).child("check").setValue(true);
+                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(check_int)).child("check").setValue(true);
                 AlertDialog.Builder builder = new AlertDialog.Builder(Beacon_3.this);
-                builder.setMessage(paradas.get(nuevo_check_int-1));
+                builder.setMessage(paradas.get(check_int));
                 builder.setNegativeButton(R.string.aceptar, null);
                 builder.create();
                 builder.show();
@@ -124,12 +122,7 @@ public class Beacon_3 extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
                     String dispositivo = dataSnapshot.child("Usuarios").child(user.getUid()).child("dispositivos").getValue().toString();
-                    String nuevo_check_string = dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_check").getValue().toString();
-                    Integer nuevo_check_int = Integer.parseInt(nuevo_check_string);
-                    nuevo_check_int = nuevo_check_int + 1;
-                    String nuevo_check = String.valueOf(nuevo_check_int);
 
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_check").setValue(nuevo_check);
                     mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(dispositivo).child("encontrado").setValue(true);
                     mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("dispositivos").setValue("nothing");
 
