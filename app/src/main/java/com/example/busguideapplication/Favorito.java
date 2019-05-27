@@ -61,7 +61,7 @@ public class Favorito extends AppCompatActivity {
     }
 
     public void Salir(View view){
-        Intent cambiar = new Intent(Favorito.this,Inicio_2.class);
+        Intent cambiar = new Intent(Favorito.this,Inicio.class);
         cambiar.putExtra("Google",datos_obt);
         cambiar.putExtra("dialog","0");
         startActivity(cambiar);
@@ -69,7 +69,7 @@ public class Favorito extends AppCompatActivity {
 
 
     public void Buscar_ruta(View view){
-        Intent cambiar = new Intent(Favorito.this, Ruta_3.class);
+        Intent cambiar = new Intent(Favorito.this, Ruta.class);
         cambiar.putExtra("Google",datos_obt);
         cambiar.putExtra("Check","0");
         finish();

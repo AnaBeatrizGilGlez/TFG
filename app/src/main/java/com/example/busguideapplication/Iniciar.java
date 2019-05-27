@@ -39,7 +39,7 @@ public class Iniciar extends AppCompatActivity {
     }
 
     private void goMainScreen(){
-        Intent intent = new Intent(this,Inicio_2.class);
+        Intent intent = new Intent(this,Inicio.class);
         intent.putExtra("Google", "1");
         intent.putExtra("dialog","1");
         startActivity(intent);
@@ -63,7 +63,7 @@ public class Iniciar extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(Iniciar.this, "Usuario entrando", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Iniciar.this,Inicio_2.class);
+                    Intent intent = new Intent(Iniciar.this,Inicio.class);
                     intent.putExtra("Google","1");
                     intent.putExtra("dialog","1");
                     startActivity(intent);

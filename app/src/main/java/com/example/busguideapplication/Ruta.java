@@ -22,7 +22,7 @@ import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ruta_3 extends AppCompatActivity {
+public class Ruta extends AppCompatActivity {
     TextView paradas,numeroparadas, lugar,detectar,tiempotitulo,tiempo;
     Button cancelar,boton_favorito;
     private String mDeviceList=null;
@@ -77,7 +77,7 @@ public class Ruta_3 extends AppCompatActivity {
                                 if (mDeviceList.equals(direcciones.get(i))) {
                                     if (mDeviceList.equals(direccion)) {
                                         if ((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
-                                            Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
+                                            Intent cambiar = new Intent(Ruta.this, Beacon.class);
                                             stopScanning();
                                             cambiar.putExtra("Datos", mDeviceList);
                                             cambiar.putExtra("Google", valor_obt);
@@ -112,7 +112,7 @@ public class Ruta_3 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ruta_2);
+        setContentView(R.layout.ruta);
 
         btManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
@@ -301,7 +301,7 @@ public class Ruta_3 extends AppCompatActivity {
 
     public void Cancelar(){
         stopScanning();
-        Intent cambiar= new Intent(Ruta_3.this,Inicio_2.class);
+        Intent cambiar= new Intent(Ruta.this,Inicio.class);
         cambiar.putExtra("Google", valor_obt);
         cambiar.putExtra("dialog","0");
         startActivity(cambiar);
