@@ -5,14 +5,22 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Beacon extends AppCompatActivity {
-    private static final String TAG = "Beacon" ;
-    Bundle datos,salida,destino,valor,check;
+    Bundle datos,valor,check;
     TextView dates;
     Button parar, cambiar;
     MediaPlayer mp;
@@ -20,106 +28,130 @@ public class Beacon extends AppCompatActivity {
     Integer numero;
     long tiempo;
     private Vibrator vibrator;
-    String salida_obt, destino_obt,valor_obt,datos_obt,check_obt;
-    Dispositivo Intercambiador_SC, Intercambiador_LL,Rayo, Peras, LL, Norte;
+    String valor_obt,datos_obt,check_obt;
+    private DatabaseReference mDatabase;
+    private FirebaseDatabase mFirebasedata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.beacon);
 
-        salida = getIntent().getExtras();
-        salida_obt= salida.getString("Salida");
-        destino = getIntent().getExtras();
-        destino_obt= destino.getString("Destino");
         datos = getIntent().getExtras();
         datos_obt= datos.getString("Datos");
         valor = getIntent().getExtras();
         valor_obt = valor.getString("Google");
         check=getIntent().getExtras();
         check_obt=check.getString("Check");
-        Intercambiador_SC = (Dispositivo)getIntent().getSerializableExtra("Objeto_sc");
-        Intercambiador_LL = (Dispositivo)getIntent().getSerializableExtra("Objeto_IntLL");
-        LL=(Dispositivo)getIntent().getSerializableExtra("Objeto_ll");
-        Peras=(Dispositivo)getIntent().getSerializableExtra("Objeto_peras");
-        Norte=(Dispositivo)getIntent().getSerializableExtra("Objeto_norte");
-        Rayo=(Dispositivo)getIntent().getSerializableExtra("Objeto_rayo");
+        final Integer check_int = Integer.parseInt(check_obt);
+
+        mFirebasedata = FirebaseDatabase.getInstance();
+        mDatabase = mFirebasedata.getReference();
 
         dates = findViewById(R.id.datos);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         mp=MediaPlayer.create(this, R.raw.sonido);
 
-        if(datos_obt.equals(LL.getDispositivo())) {
-            lugar=LL.getNombre();
-            dates.setText(LL.getNombre());
-            LL.setEncontrado(true);
-        }
-        if(datos_obt.equals(Peras.getDispositivo())) {
-            lugar=Peras.getNombre();
-            dates.setText(Peras.getNombre());
-            Peras.setEncontrado(true);
-        }
-        if(datos_obt.equals(Rayo.getDispositivo())) {
-            lugar=Rayo.getNombre();
-            dates.setText(Rayo.getNombre());
-            Rayo.setEncontrado(true);
-        }
-        if(datos_obt.equals(Intercambiador_LL.getDispositivo())) {
-            lugar=Intercambiador_LL.getNombre();
-            dates.setText(Intercambiador_LL.getNombre());
-            Intercambiador_LL.setEncontrado(true);
-        }
-        if(datos_obt.equals(Norte.getDispositivo())) {
-            lugar=Norte.getNombre();
-            dates.setText(Norte.getNombre());
-            Norte.setEncontrado(true);
-        }
-        if(datos_obt.equals(Intercambiador_SC.getDispositivo())) {
-            lugar = Intercambiador_SC.getNombre();
-            dates.setText(Intercambiador_SC.getNombre());
-            Intercambiador_SC.setEncontrado(true);
-        }
+        mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+                List<String> direcciones = new ArrayList<String>();
+                List<String> nombre_direcciones = new ArrayList<String>();
+                List<String> paradas = new ArrayList<String>();
+                List<String> paradas_check = new ArrayList<String>();
+                FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+
+                String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
+                String destino = dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().toString();
+
+                for(DataSnapshot note : dataSnapshot.child("Beacons").getChildren()){
+                    direcciones.add(note.child("direccion").getValue().toString());
+                    nombre_direcciones.add(note.child("nombre").getValue().toString());
+                }
+
+                for (DataSnapshot note : dataSnapshot.child("Rutas").child(salida).child(destino).child("Paradas").getChildren()) {
+                    String paradas_n = note.child("descripcion").getValue().toString();
+                    paradas.add(paradas_n);
+                    String paradas_checki = note.getKey();
+                    paradas_check.add(paradas_checki);
+                    Log.i(String.valueOf(getApplicationContext()), paradas_checki);
+                }
+
+                for(int i=0;i<direcciones.size();i++){
+                    if(datos_obt.equals(direcciones.get(i))){
+                        lugar = nombre_direcciones.get(i);
+                        dates.setText(nombre_direcciones.get(i));
+                        String dispositivo = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("dispositivos").setValue(dispositivo);
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(dispositivo).child("encontrado").setValue("true");
+                    }
+                }
+
+                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").child(paradas_check.get(check_int)).child("check").setValue(true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Beacon.this);
+                builder.setMessage(paradas.get(check_int));
+                builder.setNegativeButton(R.string.aceptar, null);
+                builder.create();
+                builder.show();
+
+                if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())){
+                    mp.start();
+                }else{
+                    if (vibrator.hasVibrator()) {
+                        tiempo = 800;
+                        vibrator.vibrate(tiempo);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         parar = findViewById(R.id.parar);
         cambiar= findViewById(R.id.cambiar);
-
-        if(lugar.equals(destino_obt)){
-            mp.start();
-        }else{
-            if (vibrator.hasVibrator()) {
-                tiempo = 800;
-                vibrator.vibrate(tiempo);
-            }
-        }
     }
 
     public void Parar_Informacion(View view){
-        if(lugar.equals(destino_obt)){
-            Intent llegar=new Intent(Beacon.this, Fin.class);
-            llegar.putExtra("Cumplida",lugar);
-            llegar.putExtra("Google",valor_obt);
-            llegar.putExtra("dialog","0");
-            mp.stop();
-            finish();
-            startActivity(llegar);
-        }else {
-            Intent vuelta = new Intent(Beacon.this, Ruta.class);
-            numero=Integer.parseInt(check_obt);
-            numero=numero+1;
-            numero_string=String.valueOf(numero);
-            vuelta.putExtra("Objeto_sc",Intercambiador_SC);
-            vuelta.putExtra("Objeto_IntLL",Intercambiador_LL);
-            vuelta.putExtra("Objeto_ll",LL);
-            vuelta.putExtra("Objeto_rayo",Rayo);
-            vuelta.putExtra("Objeto_peras",Peras);
-            vuelta.putExtra("Objeto_norte", Norte);
-            vuelta.putExtra("Salida", salida_obt);
-            vuelta.putExtra("Datos", destino_obt);
-            vuelta.putExtra("Google",valor_obt);
-            vuelta.putExtra("Check",numero_string);
-            finish();
-            startActivity(vuelta);
-        }
+        mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+                    String dispositivo = dataSnapshot.child("Usuarios").child(user.getUid()).child("dispositivos").getValue().toString();
+
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(dispositivo).child("encontrado").setValue(true);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("dispositivos").setValue("nothing");
+
+                    if(lugar.equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue())) {
+                        mp.stop();
+                        Intent llegar=new Intent(Beacon.this, Fin.class);
+                        llegar.putExtra("Cumplida",lugar);
+                        llegar.putExtra("Google",valor_obt);
+                        llegar.putExtra("dialog","0");
+                        finish();
+                        startActivity(llegar);
+                    }else{
+                        Intent vuelta = new Intent(Beacon.this, Ruta.class);
+                        numero=Integer.parseInt(check_obt);
+                        numero=numero+1;
+                        numero_string=String.valueOf(numero);
+                        vuelta.putExtra("Google",valor_obt);
+                        vuelta.putExtra("Check",numero_string);
+                        finish();
+                        startActivity(vuelta);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void Cambiar_Ruta(View view){
@@ -130,3 +162,4 @@ public class Beacon extends AppCompatActivity {
         startActivity(cambiar);
     }
 }
+

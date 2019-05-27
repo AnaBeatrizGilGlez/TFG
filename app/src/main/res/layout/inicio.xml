@@ -57,11 +57,27 @@
             android:textColor="@color/Colorblanco"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.552"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.748" />
+            app:layout_constraintVertical_bias="0.739"/>
 
+    <Button
+            android:id="@+id/favoritos"
+            android:layout_width="225dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/Colorbuttom"
+            android:text="Paradas Favoritas"
+            android:onClick="Favoritos"
+            android:textColor="@color/Colorblanco"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.865"/>
     <Spinner
             android:id="@+id/spinnerlugares"
             android:layout_width="wrap_content"
@@ -111,7 +127,7 @@
             app:srcCompat="@drawable/setting"/>
 
     <ImageView
-            android:id="@+id/salir"
+            android:id="@+id/elegir"
             android:layout_width="30dp"
             android:layout_height="29dp"
             android:layout_marginStart="8dp"

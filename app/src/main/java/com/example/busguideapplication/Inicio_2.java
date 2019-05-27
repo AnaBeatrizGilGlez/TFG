@@ -1,6 +1,5 @@
 package com.example.busguideapplication;
 
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -36,7 +35,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
     BluetoothAdapter btAdapter;
     BluetoothLeScanner btScanner;
     Spinner combolugares,salida_personas;
-    Button buscar;
+    Button buscar, favoritos;
     TextView nombre_perfil;
     private GoogleApiClient googleApiClient;
     ImageView confi,foto_perfil;
@@ -47,6 +46,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
     String datos_obt,dialog_obt;
     ArrayAdapter<CharSequence> adapter;
     TextView start;
+
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private DatabaseReference mDatabase;
@@ -60,27 +60,21 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                     mDeviceList = result.getDevice().getAddress();
                     Log.i(String.valueOf(getApplicationContext()), mDeviceList);
-                    List<String> direcciones = new ArrayList<String>();
+                    List<String> direcciones = new ArrayList<>();
                     List<String> nombre_direcciones = new ArrayList<>();
                     FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
 
-                    if (dataSnapshot.exists()) {
-                        for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
-                            direcciones.add(note.child("direccion").getValue().toString());
-                            nombre_direcciones.add(note.child("nombre").getValue().toString());
-                        }
+                    for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
+                        direcciones.add(note.child("direccion").getValue().toString());
+                        nombre_direcciones.add(note.child("nombre").getValue().toString());
+                    }
 
-                        for (int i = 0; i < direcciones.size(); i++) {
-                            String nombre = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
-                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("encontrado").setValue(false);
-                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("ruta").setValue(false);
-                        }
+                    if (dataSnapshot.exists()) {
                         for(int i=0;i<direcciones.size();i++) {
                             if (mDeviceList.equals(direcciones.get(i))) {
                                 mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("inicializar").setValue(nombre_direcciones.get(i));
                                 Log.i(String.valueOf(getApplicationContext()), "Hi");
                                 stopScanning();
-                                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
                                 Funcion();
                             }
                         }
@@ -151,6 +145,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
                                     if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals("Seleccione lugar")) {
                                         Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                                                 Toast.LENGTH_SHORT).show();
@@ -159,7 +154,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                                             Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida.",
                                                     Toast.LENGTH_SHORT).show();
                                         } else {
-                                            if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(aux_salida)) {
+                                            if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue())) {
                                                 Toast.makeText(getApplicationContext(), "La parada destino es igual a la parada salida",
                                                         Toast.LENGTH_SHORT).show();
                                             } else {
@@ -199,7 +194,6 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.inicio);
 
-
         mFirebasedata = FirebaseDatabase.getInstance();
         mDatabase = mFirebasedata.getReference();
         final FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
@@ -208,6 +202,31 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("inicializar").setValue("nothing");
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Destino").setValue("Seleccione lugar");
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Salida").setValue("Seleccione lugar");
+
+        mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> direcciones = new ArrayList<>();
+                List<String> nombre_direcciones = new ArrayList<>();
+                for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
+                    direcciones.add(note.child("direccion").getValue().toString());
+                    nombre_direcciones.add(note.child("nombre").getValue().toString());
+                    Log.i(String.valueOf(getApplicationContext()),"Direcciones" + direcciones + "Nombre " + nombre_direcciones);
+                }
+
+                for (int i = 0; i < direcciones.size(); i++) {
+                    Log.i(String.valueOf(getApplicationContext()),"ENTRA");
+                    String nombre = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("encontrado").setValue(false);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("ruta").setValue(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         mDatabase.child("Dispositivos").child("Array_dest").addValueEventListener(new ValueEventListener() {
@@ -304,6 +323,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
         salida_personas=findViewById(R.id.salida_persona);
         confi = findViewById(R.id.confi);
         buscar=findViewById(R.id.buscar);
+        favoritos = findViewById(R.id.favoritos);
         start=findViewById(R.id.Start);
         nombre_perfil=findViewById(R.id.nombre_perfil);
 
@@ -410,7 +430,6 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
     }
 
     public void Buscar_ruta(View view){
-        stopScanning();
         mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -419,7 +438,7 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                     Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                             Toast.LENGTH_SHORT).show();
                 }else{
-                    if (dataSnapshot.child("Usuarios").child(user.getUid()).child("inicializar").getValue().equals( "null") || !dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_no").getValue().equals("0")) {  //Cambiar aux
+                    if (dataSnapshot.child("Usuarios").child(user.getUid()).child("inicializar").getValue().equals("nothing") || !dataSnapshot.child("Usuarios").child(user.getUid()).child("aux_no").getValue().equals("0")) {  //Cambiar aux
                         if(dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().equals("Seleccione lugar")){
                             Toast.makeText(getApplicationContext(), "Por favor seleccione un lugar de salida. Ya que no se ha detectado ninguna parada",
                                     Toast.LENGTH_SHORT).show();
@@ -450,12 +469,12 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
                         if(dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals("Seleccione lugar")){
                             Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                                     Toast.LENGTH_SHORT).show();
-                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
+                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
                         }else {
                             if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(inicializar)) {
                                 Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
                                         Toast.LENGTH_SHORT).show();
-                                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
+                                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
                             } else {
                                 List<String> hijo = new ArrayList<>();
                                 String salida = dataSnapshot.child("Usuarios").child(user.getUid()).child("Salida").getValue().toString();
@@ -482,6 +501,13 @@ public class Inicio_2 extends AppCompatActivity implements GoogleApiClient.OnCon
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
+    }
+
+    public void Favoritos(View view){
+        Intent cambiar = new Intent(Inicio_2.this,Favorito.class);
+        cambiar.putExtra("Google",datos_obt);
+        finish();
+        startActivity(cambiar);
     }
 
     @Override

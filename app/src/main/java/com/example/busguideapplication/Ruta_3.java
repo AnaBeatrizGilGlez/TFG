@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.text.method.ScrollingMovementMethod;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,7 +24,7 @@ import java.util.List;
 
 public class Ruta_3 extends AppCompatActivity {
     TextView paradas,numeroparadas, lugar,detectar,tiempotitulo,tiempo;
-    Button buscar,cancelar;
+    Button cancelar,boton_favorito;
     private String mDeviceList=null;
     BluetoothManager btManager;
     BluetoothAdapter btAdapter;
@@ -36,7 +34,6 @@ public class Ruta_3 extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseDatabase mFirebasedata;
     LinearLayout contenedor;
-
 
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
@@ -72,20 +69,23 @@ public class Ruta_3 extends AppCompatActivity {
                             en_ruta.add(note.child("Dispositivo_ruta").getValue().toString());
                         }
 
-                        String direccion = dataSnapshot.child("Beacons").child(en_ruta.get(check_int)).child("direccion").getValue().toString();
+                        if(en_ruta.size()>0) {
+                            Log.i(String.valueOf(getApplicationContext()), "Asco" + check_int);
+                            String direccion = dataSnapshot.child("Beacons").child(en_ruta.get(check_int)).child("direccion").getValue().toString();
 
-                        for(int i=0;i<direcciones.size();i++) {
-                            if (mDeviceList.equals(direcciones.get(i))) {
-                                if(mDeviceList.equals(direccion)){
-                                    if((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
-                                        finish();
-                                        Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
-                                        stopScanning();
-                                        cambiar.putExtra("Datos", mDeviceList);
-                                        cambiar.putExtra("Google", valor_obt);
-                                        cambiar.putExtra("dialog", "0");
-                                        cambiar.putExtra("Check", check_obt);
-                                        startActivity(cambiar);
+                            for (int i = 0; i < direcciones.size(); i++) {
+                                if (mDeviceList.equals(direcciones.get(i))) {
+                                    if (mDeviceList.equals(direccion)) {
+                                        if ((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
+                                            Intent cambiar = new Intent(Ruta_3.this, Beacon_3.class);
+                                            stopScanning();
+                                            cambiar.putExtra("Datos", mDeviceList);
+                                            cambiar.putExtra("Google", valor_obt);
+                                            cambiar.putExtra("dialog", "0");
+                                            cambiar.putExtra("Check", check_obt);
+                                            finish();
+                                            startActivity(cambiar);
+                                        }
                                     }
                                 }
                             }
@@ -122,6 +122,7 @@ public class Ruta_3 extends AppCompatActivity {
 
         mFirebasedata = FirebaseDatabase.getInstance();
         mDatabase = mFirebasedata.getReference();
+        final FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
 
         valor = getIntent().getExtras();
         check = getIntent().getExtras();
@@ -129,17 +130,85 @@ public class Ruta_3 extends AppCompatActivity {
         check_obt = check.getString("Check");
         final Integer check_int = Integer.parseInt(check_obt);
 
-        buscar = findViewById(R.id.buscar);
         stopScanning();
         startScanning();
 
         paradas = findViewById(R.id.paradas);
+        boton_favorito=findViewById(R.id.boton_favorito);
         numeroparadas = findViewById(R.id.numeroparadas);
         lugar = findViewById(R.id.lugar);
         cancelar = findViewById(R.id.cancelar);
         detectar = findViewById(R.id.detectar);
         tiempotitulo = findViewById(R.id.tiempotitulo);
         tiempo = findViewById(R.id.tiempo);
+
+        cancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Cancelar();
+            }
+        });
+
+        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    final String salida = dataSnapshot.child("Salida").getValue().toString();
+                    final String destino = dataSnapshot.child("Destino").getValue().toString();
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                String direccion_final = salida.concat("-").concat(destino);
+                                Integer aux=0;
+                                for(DataSnapshot note : dataSnapshot.getChildren()){
+                                    if(note.getValue().equals(direccion_final)){
+                                        aux=1;
+                                        boton_favorito.setText("Quitar favoritos");
+                                        boton_favorito.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Quitar();
+                                            }
+                                        });
+                                    }else{
+                                        aux=0;
+                                    }
+                                }
+                                if(aux==0){
+                                    boton_favorito.setText("Añadir favoritos");
+                                    boton_favorito.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Añadir();
+                                        }
+                                    });
+                                }
+
+                            }else{
+                                boton_favorito.setText("Añadir a favoritos");
+                                boton_favorito.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Añadir();
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mDatabase.child("Dispositivos").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -230,11 +299,97 @@ public class Ruta_3 extends AppCompatActivity {
         });
     }
 
-    public void Cancelar_Ruta (View view){
+    public void Cancelar(){
+        stopScanning();
         Intent cambiar= new Intent(Ruta_3.this,Inicio_2.class);
         cambiar.putExtra("Google", valor_obt);
         cambiar.putExtra("dialog","0");
-        finish();
         startActivity(cambiar);
+    }
+
+    public void Añadir (){
+        final FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    final Integer[] aux = {0};
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                for (DataSnapshot note : dataSnapshot.getChildren()){
+                                    aux[0]++;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    String nuevo_string = String.valueOf(aux[0]);
+                    String nuevo_string_col = nuevo_string.concat(nuevo_string);
+                    String salida = dataSnapshot.child("Salida").getValue().toString();
+                    String destino = dataSnapshot.child("Destino").getValue().toString();
+                    String direccion_final = salida.concat("-").concat(destino);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(nuevo_string_col).setValue(direccion_final);
+                    boton_favorito.setText("Quitar favorito");
+                    boton_favorito.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Quitar();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void Quitar(){
+        final FirebaseUser user= FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String salida = dataSnapshot.child("Salida").getValue().toString();
+                final String destino = dataSnapshot.child("Destino").getValue().toString();
+                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String direccion_final = salida.concat("-").concat(destino);
+                        String direccion_borrar = null;
+                        for (DataSnapshot note : dataSnapshot.getChildren()){
+                            if(note.getValue().equals(direccion_final)){
+                                direccion_borrar = note.getKey();
+                            }
+                        }
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(direccion_borrar).setValue(null);
+                        boton_favorito.setText("Añadir favoritos");
+                        boton_favorito.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Añadir();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

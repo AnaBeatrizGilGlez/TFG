@@ -72,7 +72,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-            android:id="@+id/salir"
+            android:id="@+id/elegir"
             android:layout_width="225dp"
             android:layout_height="62dp"
             android:layout_marginStart="8dp"
