@@ -32,7 +32,6 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
     Integer aux=0;
     Integer aux_2=1;
     private FirebaseAuth firebaseAuth;
-    CheckBox boxi;
     FirebaseAuth.AuthStateListener firebaseauthlistener;
 
     @Override
@@ -47,9 +46,6 @@ public class Registro extends AppCompatActivity implements  GoogleApiClient.OnCo
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail().build();
-
-        /*GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail().build();*/
 
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,gso).build();
 

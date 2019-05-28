@@ -329,7 +329,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
 
         if(user!=null) {
             if (datos_obt.equals("1")) {
-                if(!(user.getDisplayName() ==null)) {
+                if(!(user.getDisplayName() == null)) {
                     nombre_perfil.setText("Bienvenido/a " + user.getDisplayName());
                 }else{
                     nombre_perfil.setText("Bienvenido/a " + user.getEmail());
@@ -458,7 +458,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                 for(int i=0;i<hijo.size();i++) {
                                     mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Rutas").child(salida).child(destino).child("Paradas").child(hijo.get(i)).child("check").setValue("false");
                                 }
-                                Intent cambiar = new Intent(Inicio.this, Ruta_3.class);
+                                Intent cambiar = new Intent(Inicio.this, Ruta.class);
                                 cambiar.putExtra("Google",datos_obt);
                                 cambiar.putExtra("Check","0");
                                 finish();

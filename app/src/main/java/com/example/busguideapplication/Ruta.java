@@ -70,7 +70,6 @@ public class Ruta extends AppCompatActivity {
                         }
 
                         if(en_ruta.size()>0) {
-                            Log.i(String.valueOf(getApplicationContext()), "Asco" + check_int);
                             String direccion = dataSnapshot.child("Beacons").child(en_ruta.get(check_int)).child("direccion").getValue().toString();
 
                             for (int i = 0; i < direcciones.size(); i++) {
@@ -153,54 +152,47 @@ public class Ruta extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    final String salida = dataSnapshot.child("Salida").getValue().toString();
-                    final String destino = dataSnapshot.child("Destino").getValue().toString();
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
-                                String direccion_final = salida.concat("-").concat(destino);
-                                Integer aux=0;
-                                for(DataSnapshot note : dataSnapshot.getChildren()){
-                                    if(note.getValue().equals(direccion_final)){
-                                        aux=1;
-                                        boton_favorito.setText("Quitar favoritos");
-                                        boton_favorito.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Quitar();
-                                            }
-                                        });
-                                    }else{
-                                        aux=0;
-                                    }
-                                }
-                                if(aux==0){
-                                    boton_favorito.setText("Añadir favoritos");
-                                    boton_favorito.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Añadir();
-                                        }
-                                    });
-                                }
-
+                    String salida = dataSnapshot.child("Salida").getValue().toString();
+                    String destino = dataSnapshot.child("Destino").getValue().toString();
+                    String direccion_final = salida.concat("-").concat(destino);
+                    Integer aux=0;
+                    if(dataSnapshot.child("Favoritos").exists()){
+                        for(DataSnapshot note : dataSnapshot.child("Favoritos").getChildren()){
+                            if(note.child("Direccion").getValue().equals(direccion_final)){
+                                aux=1;
+                                break;
                             }else{
-                                boton_favorito.setText("Añadir a favoritos");
-                                boton_favorito.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Añadir();
-                                    }
-                                });
+                                aux=0;
                             }
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                        if(aux==0){
+                            boton_favorito.setText("Añadir favoritos");
+                            boton_favorito.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Añadir();
+                                }
+                            });
+                        }else{
+                            boton_favorito.setText("Quitar favoritos");
+                            Log.i(String.valueOf(getApplicationContext()), "aux" + "Entro");
+                            boton_favorito.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Quitar();
+                                }
+                            });
                         }
-                    });
+                    }else{
+                        boton_favorito.setText("Añadir favoritos");
+                        boton_favorito.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Añadir();
+                            }
+                        });
+                    }
                 }
             }
 
@@ -313,28 +305,23 @@ public class Ruta extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    final Integer[] aux = {0};
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
-                                for (DataSnapshot note : dataSnapshot.getChildren()){
-                                    aux[0]++;
-                                }
-                            }
+                    String aux = "0";
+                    if(dataSnapshot.child("Favoritos").exists()) {
+                        for (DataSnapshot note : dataSnapshot.child("Favoritos").getChildren()) {
+                            aux = note.getKey();
+                            Integer auxiliar = Integer.parseInt(aux);
+                            auxiliar = auxiliar + 1;
+                            Log.i(String.valueOf(getApplicationContext()),"auxiliar" + auxiliar);
+                            aux=String.valueOf(auxiliar);
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                    String nuevo_string = String.valueOf(aux[0]);
-                    String nuevo_string_col = nuevo_string.concat(nuevo_string);
                     String salida = dataSnapshot.child("Salida").getValue().toString();
                     String destino = dataSnapshot.child("Destino").getValue().toString();
                     String direccion_final = salida.concat("-").concat(destino);
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(nuevo_string_col).setValue(direccion_final);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(aux).child("Direccion").setValue(direccion_final);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(aux).child("Seleccionada").setValue("false");
+
                     boton_favorito.setText("Quitar favorito");
                     boton_favorito.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -357,31 +344,48 @@ public class Ruta extends AppCompatActivity {
         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String salida = dataSnapshot.child("Salida").getValue().toString();
-                final String destino = dataSnapshot.child("Destino").getValue().toString();
-                mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String direccion_final = salida.concat("-").concat(destino);
-                        String direccion_borrar = null;
-                        for (DataSnapshot note : dataSnapshot.getChildren()){
-                            if(note.getValue().equals(direccion_final)){
-                                direccion_borrar = note.getKey();
-                            }
-                        }
-                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(direccion_borrar).setValue(null);
-                        boton_favorito.setText("Añadir favoritos");
-                        boton_favorito.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Añadir();
-                            }
-                        });
+                String salida = dataSnapshot.child("Salida").getValue().toString();
+                String destino = dataSnapshot.child("Destino").getValue().toString();
+                String direccion_final = salida.concat("-").concat(destino);
+                String direccion_borrar = null;
+                List<String> favoritos = new ArrayList<>();
+                List<String> favoritos_seleccionados = new ArrayList<>();
+                Integer aux=0;
+                Integer i=1;
+                for(DataSnapshot note : dataSnapshot.child("Favoritos").getChildren()){
+                    if(note.child("Direccion").getValue().equals(direccion_final)){
+                        direccion_borrar = note.getKey();
+                        aux=1;
                     }
-
+                    if(aux==1){
+                        favoritos.add(note.child("Direccion").getValue().toString());
+                        favoritos_seleccionados.add(note.child("Seleccionada").getValue().toString());
+                    }
+                }
+                favoritos.add(null);
+                favoritos_seleccionados.add(null);
+                for(DataSnapshot note : dataSnapshot.child("Favoritos").getChildren()){
+                    if(note.getKey().equals(direccion_borrar)){
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(note.getKey()).child("Direccion").setValue(favoritos.get(i));
+                        mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(note.getKey()).child("Seleccionada").setValue(favoritos_seleccionados.get(i));
+                        i++;
+                        aux=2;
+                    }
+                    if(aux==2){
+                        aux++;
+                    }else{
+                        if(aux==3){
+                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(note.getKey()).child("Direccion").setValue(favoritos.get(i));
+                            mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Favoritos").child(note.getKey()).child("Seleccionada").setValue(favoritos_seleccionados.get(i));
+                            i++;
+                        }
+                    }
+                }
+                boton_favorito.setText("Añadir favoritos");
+                boton_favorito.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    public void onClick(View v) {
+                        Añadir();
                     }
                 });
             }

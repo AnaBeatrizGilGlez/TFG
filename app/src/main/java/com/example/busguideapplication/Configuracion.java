@@ -67,7 +67,7 @@ public class Configuracion extends AppCompatActivity {
     }
 
     public void Salir(View view){
-        Intent intent=new Intent(Configuracion.this,Inicio_2.class);
+        Intent intent=new Intent(Configuracion.this,Inicio.class);
         intent.putExtra("Google","1");
         intent.putExtra("dialog","0");
         finish();
@@ -106,7 +106,7 @@ public class Configuracion extends AppCompatActivity {
         }
 
         if(aux.equals("1")){
-            Intent intent=new Intent(Configuracion.this,Inicio_2.class);
+            Intent intent=new Intent(Configuracion.this,Inicio.class);
             intent.putExtra("dialog","0");
             intent.putExtra("Google","1");
             finish();
