@@ -18,6 +18,7 @@ import android.widget.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import org.spongycastle.jcajce.provider.digest.SHA3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,8 @@ public class Ruta extends AppCompatActivity {
                     List<String> encontrado = new ArrayList<String>();
                     List<String> ruta = new ArrayList<String>();
                     List<String> en_ruta = new ArrayList<String>();
+                    List<String> firma = new ArrayList<String>();
+                    List<String> firma_comprobacion = new ArrayList<String>();
                     Integer check_int = Integer.parseInt(check_obt);
 
                     FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
@@ -58,6 +61,7 @@ public class Ruta extends AppCompatActivity {
                         for (DataSnapshot note : dataSnapshot.child("Beacons").getChildren()) {
                             direcciones.add(note.child("direccion").getValue().toString());
                             nombre_direcciones.add(note.child("nombre").getValue().toString());
+                            firma.add(note.child("firma").getValue().toString());
                         }
 
                         for(DataSnapshot note : dataSnapshot.child("Usuarios").child(user.getUid()).child("Beacons").getChildren()){
@@ -69,21 +73,43 @@ public class Ruta extends AppCompatActivity {
                             en_ruta.add(note.child("Dispositivo_ruta").getValue().toString());
                         }
 
+                        for(int i=0;i<firma.size();i++){
+                            String direccion = direcciones.get(i);
+                            String nombre_direccion = nombre_direcciones.get(i);
+                            String concat = direccion.concat(nombre_direccion);
+                            byte[] input, output5;
+                            StringBuffer hexString = new StringBuffer();
+                            final SHA3.DigestSHA3 md = new SHA3.DigestSHA3(512);
+
+                            input = concat.getBytes();
+                            md.reset();
+                            md.update(input);
+                            output5=md.digest();
+                            for(int j=0;j<output5.length;j++){
+                                hexString.append(Integer.toHexString(0xFF & output5[j]));
+                            }
+                            firma_comprobacion.add(hexString.toString());
+                        }
+
                         if(en_ruta.size()>0) {
                             String direccion = dataSnapshot.child("Beacons").child(en_ruta.get(check_int)).child("direccion").getValue().toString();
 
                             for (int i = 0; i < direcciones.size(); i++) {
                                 if (mDeviceList.equals(direcciones.get(i))) {
                                     if (mDeviceList.equals(direccion)) {
-                                        if ((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
-                                            Intent cambiar = new Intent(Ruta.this, Beacon.class);
-                                            stopScanning();
-                                            cambiar.putExtra("Datos", mDeviceList);
-                                            cambiar.putExtra("Google", valor_obt);
-                                            cambiar.putExtra("dialog", "0");
-                                            cambiar.putExtra("Check", check_obt);
-                                            finish();
-                                            startActivity(cambiar);
+                                        Log.i(String.valueOf(getApplicationContext()),"Firma de la direccion " + mDeviceList + "es " + firma_comprobacion.get(i) + "la firma otra es " + firma.get(i));
+                                        if(firma.get(i).equals(firma_comprobacion.get(i))) {
+                                            Log.i(String.valueOf(getApplicationContext()),"Firma de la direccion " + mDeviceList + "es " + firma_comprobacion.get(i));
+                                            if ((encontrado.get(i).equals("false")) && (ruta.get(i).equals("true"))) {
+                                                Intent cambiar = new Intent(Ruta.this, Beacon.class);
+                                                stopScanning();
+                                                cambiar.putExtra("Datos", mDeviceList);
+                                                cambiar.putExtra("Google", valor_obt);
+                                                cambiar.putExtra("dialog", "0");
+                                                cambiar.putExtra("Check", check_obt);
+                                                finish();
+                                                startActivity(cambiar);
+                                            }
                                         }
                                     }
                                 }
@@ -237,7 +263,7 @@ public class Ruta extends AppCompatActivity {
                 }
 
                 for (int i = 0; i < en_ruta.size(); i++) {
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(en_ruta.get(i)).child("ruta").setValue(true);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(en_ruta.get(i)).child("ruta").setValue("true");
                 }
 
                 ArrayList<Check> lista = new ArrayList<Check>();

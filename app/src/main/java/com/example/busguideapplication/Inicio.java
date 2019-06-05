@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import org.spongycastle.jcajce.provider.digest.SHA3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +77,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                 mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("inicializar").setValue(nombre_direcciones.get(i));
                                 Log.i(String.valueOf(getApplicationContext()), "Hi");
                                 stopScanning();
+                                //new Handler().postDelayed(this.Funcion(),5000);
                                 Funcion();
                             }
                         }
@@ -117,7 +120,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                         Log.i(String.valueOf(getApplicationContext()), "Yes");
                                         mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
                                     } else {
-                                        if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(inicializar)) {
+                                        if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("inicializar").getValue())) {
                                             Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
                                                     Toast.LENGTH_SHORT).show();
                                             mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
@@ -145,7 +148,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("0");
+                                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
                                     if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals("Seleccione lugar")) {
                                         Toast.makeText(getApplicationContext(), "Seleccione un lugar destino por favor",
                                                 Toast.LENGTH_SHORT).show();
@@ -178,7 +181,8 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                         }
                                     }
                                 }
-                            }).create();
+                            });
+                    builder.create();
                     builder.show();
                 }
             }
@@ -217,8 +221,8 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                 for (int i = 0; i < direcciones.size(); i++) {
                     Log.i(String.valueOf(getApplicationContext()),"ENTRA");
                     String nombre = dataSnapshot.child("Disp-Nombre").child(nombre_direcciones.get(i)).getValue().toString();
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("encontrado").setValue(false);
-                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("ruta").setValue(false);
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("encontrado").setValue("false");
+                    mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("Beacons").child(nombre).child("ruta").setValue("false");
                 }
             }
 
@@ -471,7 +475,7 @@ public class Inicio extends AppCompatActivity implements GoogleApiClient.OnConne
                                     Toast.LENGTH_SHORT).show();
                             mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
                         }else {
-                            if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(inicializar)) {
+                            if (dataSnapshot.child("Usuarios").child(user.getUid()).child("Destino").getValue().equals(dataSnapshot.child("Usuarios").child(user.getUid()).child("inicializar").getValue())) {
                                 Toast.makeText(getApplicationContext(), "Usted se encuentra ya en esta parada destino. Seleccione otra parada destino por favor",
                                         Toast.LENGTH_SHORT).show();
                                 mDatabase.child("Dispositivos").child("Usuarios").child(user.getUid()).child("aux_no").setValue("1");
